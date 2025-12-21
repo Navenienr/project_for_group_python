@@ -20,7 +20,9 @@ class User(AbstractUser):
         help_text='Введите ваш email'
     )
 
-class Meta:
-    verbose_name = 'Пользователь'
-    verbose_name_plural = 'Пользователи'
-    
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
+
+   
