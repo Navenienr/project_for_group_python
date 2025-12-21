@@ -24,6 +24,9 @@ class User(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
+    def __str__(self):
+        return self.username
+
     
 
 
@@ -43,5 +46,5 @@ class Moderator(models.Model):
         verbose_name = 'Модератор'
         verbose_name_plural = 'Модераторы'
 
-        def __str__(self):
-            return f'Модератор {self.user.username}'
+    def __str__(self):
+        return f'Модератор {self.user.username}'
