@@ -13,12 +13,14 @@ from django.contrib.auth.models import AbstractUser, User
 
 class User(AbstractUser):
     # Модель пользователя
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name='user',
-        verbose_name='пользователь'
-        null=True,
-        blank=True
+
+    email = models.EmailField(
+        verbose_name='Email',
+        unique=True,
+        help_text='Введите ваш email'
     )
+
+class Meta:
+    verbose_name = 'Пользователь'
+    verbose_name_plural = 'Пользователи'
     
