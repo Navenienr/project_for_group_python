@@ -20,6 +20,46 @@ class User(AbstractUser):
         help_text='Введите ваш email'
     )
 
+    is_moderator = models.BooleanField(
+        verbose_name='Модератор',
+        default=False,
+        help_text='Пользователь имеет права модератора'
+    )
+
+    can_create_news = models.BooleanField(
+        verbose_name='Может создавать новости',
+        default=False
+    )
+
+    can_edit_news = models.BooleanField(
+        verbose_name='Может редактировать новости',
+        default=False
+    )
+
+    can_delete_news = models.BooleanField(
+        verbose_name='Может удалять новости',
+        default=False
+    )
+
+    can_delete_comments = models.BooleanField(
+        verbose_name='Может удалять комментарии',
+        default=False
+    )
+
+    can_ban_1_day = models.BooleanField(
+        verbose_name='Может банить на один день',
+        default=False
+    )
+
+    appointed_by = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Назначен администратором',
+        related_name='appointed_moderators'
+    )
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
@@ -27,49 +67,7 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
     
-    
 
-
-class Moderator(models.Model):
-    # Модель модератора
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name='moderator',
-        verbose_name='Модератор'
-    )
-
-    can_create_news = models.BooleanField(
-        verbose_name='Может создавать новости',
-        default=True
-    )
-
-    can_edit_news = models.BooleanField(
-        verbose_name='Может редактировать новости',
-        default=True
-    )
-    
-    
-    can_delete_news = models.BooleanField(
-        verbose_name='Может удалять новости',
-        default=True
-    )    
-
-    can_delete_comments = models.BooleanField(
-        verbose_name='Может удалять комментарии',
-        default=True
-    )
-
-    can_ban_1_day = models.BooleanField(
-        verbose_name='Может банить на 1 день',
-        default=True
-    )
-    class Meta:
-        verbose_name = 'Модератор'
-        verbose_name_plural = 'Модераторы'
-
-    def __str__(self):
-        return f'Модератор {self.user.username}'
     
 
 class AdminProfile(models.Model):
@@ -78,7 +76,8 @@ class AdminProfile(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='admin',
-        verbose_name='Админ'
+        verbose_name='Админ',
+        limit_choices_to={'is_superuser': True}
     )
     
     can_ban = models.BooleanField(
@@ -95,6 +94,14 @@ class AdminProfile(models.Model):
         verbose_name='Может просматривать статистику',
         default=True
     )
+
+    manage_moderators = models.ManyToManyField(
+        User,
+        verbose_name='Назначенные модераторы',
+        related_name='managed_by_admin',
+        blank=True,
+        limit_choices_to={'is_moderator': True}
+    )
     
 
     class Meta:
@@ -103,3 +110,44 @@ class AdminProfile(models.Model):
 
     def __str__(self):
         return f'Администратор {self.user.username}'
+    
+
+    def promote_to_moderator(self, user, permissions):
+        # Назначить права модератора
+
+        if not self.can_manage_moderators:
+            return False, "Нет прав на назначение модераторов"
+        
+
+        user.is_moderator = True
+        user.can_create_news = permissions.get('can_create_news', False)
+        user.can_edit_news = permissions.get('can_edit_news', False)
+        user.can_delete_news = permissions.get('can_delete_news', False)
+        user.can_delete_comments = permissions.get('can_delete_comments', False)
+        user.can_ban_1_day = permissions.get('can_ban_1_day', False)
+        user.appointed_by = self.user
+        user.save()
+
+        self.manage_moderators.add(user)
+        self.save()
+
+        return True, f"Пользователь {user.username} назначен модератором"
+    
+    def demote_moderator(self, user):
+        # Снять права модератора
+        if not self.can_manage_moderators:
+            return False, "Нет прав на снятие модераторов"
+        
+        user.is_moderator = False
+        user.can_create_news = False
+        user.can_edit_news = False
+        user.can_delete_news = False
+        user.can_delete_comments = False
+        user.can_ban_1_day = False
+        user.appointed_by = None
+        user.save()
+
+        self.manage_moderators.remove(user)
+        self.save()
+
+        return True, f"У пользователя {user.username} сняты права модератора"
