@@ -4,7 +4,7 @@
 """
 from django.db import models
 from django.contrib.auth.models import AbstractUser, User
-
+from django.utils import timezone
 
 # Если нужна кастомная модель пользователя, раскомментируйте:
 # class User(AbstractUser):
@@ -60,6 +60,14 @@ class User(AbstractUser):
         related_name='appointed_moderators'
     )
 
+
+    last_activity = models.DateTimeField(
+        verbose_name='Последняя активность',
+        null=True,
+        blank=True,
+        help_text='Дата и время последней активности на сайте'
+    )
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
@@ -67,6 +75,9 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
     
+    def update_last_activity(self):
+        self.last_activity = timezone.now()
+        self.save(update_fields=['last_activity'])
 
     
 
