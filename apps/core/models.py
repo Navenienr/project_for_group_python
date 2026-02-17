@@ -5,6 +5,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, User
 from django.utils import timezone
+from django.db.models import Q
 
 # Если нужна кастомная модель пользователя, раскомментируйте:
 # class User(AbstractUser):
@@ -162,3 +163,68 @@ class AdminProfile(models.Model):
         self.save()
 
         return True, f"У пользователя {user.username} сняты права модератора"
+    
+
+class News(models.Model):
+    # Модель новостей
+    title = models.CharField(
+        verbose_name='Заголовок',
+        max_length=200
+    )
+
+
+    content= models.TextField(
+        verbose_name='Содержание'
+    )
+
+
+    author = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='news',
+        verbose_name='Автор',
+        limit_choices_to=models.Q(is_moderator=True) | models.Q(is_superuser=True)  # Только для модеров и админов
+    )
+
+
+    created_at = models.DateTimeField(
+        verbose_name='Дата создания',
+        auto_now_add=True
+    )
+
+
+    is_published = models.BooleanField(
+        verbose_name='Опубликовано',
+        default=True
+    )
+
+
+    class Meta:
+        verbose_name = 'Новость'
+        verbose_name_plural = 'Новости'
+        ordering = ['-created_at']
+        permissions = [
+            ('can_create_news', 'Может создавать новости')
+        ]
+
+    def __str__(self):
+        return self.title
+
+
+    def can_edit(self, user):
+        # Проверка, может ли пользователь редактировать новость
+        if user.is_superuser:
+            return True
+        if user.is_moderator and user.can_edit_news:
+            return True
+        return False
+    
+
+    def can_delete(self, user):
+        # Проверка, может ли пользователь удалять новость
+        if user.is_superuser:
+            return True
+        if user.is_moderator and user.can_delete_news:
+            return True
+        return False
