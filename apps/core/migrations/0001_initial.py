@@ -65,21 +65,4 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Администраторы',
             },
         ),
-        migrations.CreateModel(
-            name='News',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200, verbose_name='Заголовок')),
-                ('content', models.TextField(verbose_name='Содержание')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')),
-                ('is_published', models.BooleanField(default=True, verbose_name='Опубликовано')),
-                ('author', models.ForeignKey(limit_choices_to=models.Q(('is_moderator', True), ('is_superuser', True), _connector='OR'), null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='news', to=settings.AUTH_USER_MODEL, verbose_name='Автор')),
-            ],
-            options={
-                'verbose_name': 'Новость',
-                'verbose_name_plural': 'Новости',
-                'ordering': ['-created_at'],
-                'permissions': [('can_create_news', 'Может создавать новости')],
-            },
-        ),
     ]
