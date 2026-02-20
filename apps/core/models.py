@@ -15,6 +15,14 @@ from django.db.models import Q
 class User(AbstractUser):
     # Модель пользователя
 
+    tg_username_id = models.BigIntegerField(
+        verbose_name='ID пользователя в Telegram',
+        unique=True,
+        null=True,
+        blank=True
+    )
+
+
     email = models.EmailField(
         verbose_name='Email',
         unique=True,
