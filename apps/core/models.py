@@ -23,6 +23,12 @@ class User(AbstractUser):
     blank=True
     )
 
+    telegram_chat_id = models.BigIntegerField(
+        verbose_name='Chat ID Telegram',
+        null=True,
+        blank=True
+    )
+
 
     email = models.EmailField(
         verbose_name='Email',
