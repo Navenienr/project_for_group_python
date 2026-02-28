@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import M from "..//style/Main.module.css";
 import S from '..//style/Profile.module.css';
 import Game_card from "../components/Game_card";
+import { NavLink } from 'react-router-dom'
 
 
 const Profile = () => {
@@ -26,6 +27,21 @@ const Profile = () => {
   const handleChange = (field, value) => {
     setData(prev => ({ ...prev, [field]: value }));
   }
+
+  const context = require.context('../img/', true, /LOGO\.jpeg$/);
+  const limit = 16;
+
+  const gamesList = context.keys().map((path, index) => {
+    const imagePath = context(path);
+    const folderName = path.split('/')[1]; 
+
+    return {
+      id: index,
+      folder: folderName,
+      title: folderName.replace(/-/g, ' '), 
+      image: imagePath
+    };
+  });
 
 
   return (
@@ -107,16 +123,17 @@ const Profile = () => {
         
 
         <div className={S.content} >
-          <h2 className={S.heading}>Мои игры</h2>
+          <h2 className={S.heading}>Избранное</h2>
             <div className={S.game_content}>
-              <Game_card/>
-              <Game_card/>
-              <Game_card/>
-              <Game_card/>
-              <Game_card/>
-              <Game_card/>
-              <Game_card/>
-              <Game_card/>
+              {gamesList.slice(0, limit).map((game) => (
+                      <NavLink 
+                        key={game.id} 
+                        to={`/game/${game.folder}`} 
+                        style={{ textDecoration: 'none' }}
+                      >
+                        <Game_card image={game.image} title={game.title} />
+                      </NavLink>
+                    ))}
             </div>
         </div>
 
