@@ -88,3 +88,20 @@ class LoginView(APIView):
             'success': False,
             'errors': 'Неправильное имя пользователя или пароль'
         }, status=status.HTTP_400_UNAUTHORIZED)
+    
+
+class LogoutView(APIView):
+    # Класс для выхода пользователя из системы
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        # метод для обработки POST-запроса
+
+        # удаление токена
+        request.user.auth_token.delete()
+
+        return Response({
+            'success': True,
+            'message': 'Вы успешно вышли из системы'
+        })
