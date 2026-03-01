@@ -20,17 +20,24 @@ def health_check(request):
 User = get_user_model()
 
 class RegisterView(generics.CreateAPIView):
+    # Класс для регистрации пользователя
+
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
 
+    
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        # метод для обработки POST-запроса
 
+        serializer = self.get_serializer(data=request.data) # создаем сериализатор
+
+        # обработка результата
         if serializer.is_valid():
-            user = serializer.save()
+            user = serializer.save() # вызываем метод create
 
-            token, created = Token.objects.get_or_create(user=user)
+            # создание токена
+            token, created = Token.objects.get_or_create(user=user) # возвращает кортеж
 
             return Response({
                 'success': True,
@@ -42,3 +49,42 @@ class RegisterView(generics.CreateAPIView):
             'success': False,
             'errors': serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LoginView(APIView):
+    # Класс для авторизации пользователя
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        # метод для обработки POST-запроса
+
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        # проверяем, что имя пользователя и пароль были переданы
+        if not username or not password:
+            return Response({
+                'success': False,
+                'errors': 'Пожалуйста, введите имя пользователя и пароль'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # аутентификация
+        user = authenticate(
+            username=username,
+            password=password
+        )
+
+        # обработка результата
+        if user:
+            token, _ = Token.objects.get_or_create(user=user)
+
+            return Response({
+                'success': True,
+                'user': UserProfileSerializer(user).data,
+                'token': token.key
+            })
+        
+        return Response({
+            'success': False,
+            'errors': 'Неправильное имя пользователя или пароль'
+        }, status=status.HTTP_400_UNAUTHORIZED)
