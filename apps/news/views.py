@@ -1,7 +1,76 @@
-"""
-Представления модуля новостей.
-"""
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from django.contrib.auth import get_user_model
+from .models import News
+from .serializers import NewsSerializer
+import telebot
+from django.conf import settings
 
 
-# Здесь будут ViewSets для новостей
+User = get_user_model()
+
+TOKEN = '8733942341:AAGEpWvQnvvkMfaLLcO31TVRQ57RkpFj3cA'
+
+bot = telebot.TeleBot(TOKEN)
+
+
+class NewsViewSet(viewsets.ModelViewSet):
+    queryset = News.objects.all()
+    serializer_class = NewsSerializer
+
+    def get_permissions(self):
+        # Проверка разрешений для публикации новости
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            self.permission_classes = [permissions.IsAdminUser]
+        else:
+            self.permission_classes = [permissions.AllowAny]
+
+        return super().get_permissions()
+    
+
+
+
+    def perform_create(self, serializer):
+        # Публикация новости
+        news = serializer.save(
+            author=self.request.user,
+            is_published=True
+        )
+
+        self._send_telegram(news)
+
+    
+    def perform_update(self, serializer):
+        # Обновление новости
+        news = serializer.save()
+
+    
+    def perform_destroy(self, instance):
+        # Удаление новости
+        instance.delete()
+
+    
+    def _send_telegram(self, news):
+        # Отправка новости в Telegram
+
+        subscribers = User.objects.exclude(telegram_chat_id__isnull=True).exclude(telegram_chat_id='')
+
+        if not subscribers.exists():
+            return
+        
+        text = f"""{news.title}
+        {news.short_description}
+        Читать: https://#домен#/news/{news.id}
+        """
+
+        for user in subscribers:
+            try:
+                bot.send_message(user.telegram_chat_id, text)
+            except Exception as e:
+                print(f"Ошибка отправки {user.telegram_chat_id}: {e}")
+
+                if "chat not found" in str(e).lower():
+                    user.telegram_chat_id = None
+                    user.save()
+

@@ -15,9 +15,16 @@ from django.db.models import Q
 class User(AbstractUser):
     # Модель пользователя
 
-    tg_username_id = models.BigIntegerField(
-        verbose_name='ID пользователя в Telegram',
-        unique=True,
+
+    tg_username = models.CharField(
+    verbose_name='Username в Telegram',
+    max_length=100,
+    null=True,
+    blank=True
+    )
+
+    telegram_chat_id = models.BigIntegerField(
+        verbose_name='Chat ID Telegram',
         null=True,
         blank=True
     )
