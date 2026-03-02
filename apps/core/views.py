@@ -105,3 +105,14 @@ class LogoutView(APIView):
             'success': True,
             'message': 'Вы успешно вышли из системы'
         })
+
+
+class ProfileView(generics.RetrieveAPIView):
+    # Класс для просмотра и редактирования профиля пользователя
+
+    serializer_class = UserProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        # метод для получения текущего пользователя
+        return self.request.user
