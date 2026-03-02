@@ -1,6 +1,6 @@
 import React from 'react'
-import S from '..//style/Game_card.module.css';
-import { NavLink } from 'react-router-dom';
+import S from '..//style/Game_card.module.css'
+import { NavLink } from 'react-router-dom'
 
 
 const Game_card = ({ image, title }) => {

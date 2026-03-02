@@ -7,20 +7,20 @@ import Logo from '../img/Atomic Heart/LOGO.jpeg'
 import { NavLink } from 'react-router-dom'
 
 const Games = () => {
-  const context = require.context('../img/', true, /LOGO\.jpeg$/);
-  const limit = 16;
+  const context = require.context('../img/', true, /LOGO\.jpeg$/)
+  const limit = 16
 
   const gamesList = context.keys().map((path, index) => {
-    const imagePath = context(path);
-    const folderName = path.split('/')[1]; 
+    const imagePath = context(path)
+    const folderName = path.split('/')[1];
 
     return {
       id: index,
       folder: folderName,
       title: folderName.replace(/-/g, ' '), 
       image: imagePath
-    };
-  });
+    }
+  })
 
   return (
     <div>

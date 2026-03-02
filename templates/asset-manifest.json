@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.408a2afc.css",
-    "main.js": "/static/js/main.5a1804ea.js",
+    "main.css": "/static/css/main.dd766fd0.css",
+    "main.js": "/static/js/main.9e1af698.js",
     "static/media/gameplay (3).jpg": "/static/media/gameplay (3).288186d7d04aace34572.jpg",
     "static/media/gameplay (5).jpg": "/static/media/gameplay (5).707e008e720324574df8.jpg",
     "static/media/Заставка.jpg": "/static/media/Заставка.61efc74ff71513df7a2f.jpg",
@@ -18,11 +18,11 @@
     "static/media/LOGO.jpeg": "/static/media/LOGO.0be90a52c3ca0a4c2c5b.jpeg",
     "static/media/LOGO.png": "/static/media/LOGO.d1f8f4f7b223339383b7.png",
     "index.html": "/index.html",
-    "main.408a2afc.css.map": "/static/css/main.408a2afc.css.map",
-    "main.5a1804ea.js.map": "/static/js/main.5a1804ea.js.map"
+    "main.dd766fd0.css.map": "/static/css/main.dd766fd0.css.map",
+    "main.9e1af698.js.map": "/static/js/main.9e1af698.js.map"
   },
   "entrypoints": [
-    "static/css/main.408a2afc.css",
-    "static/js/main.5a1804ea.js"
+    "static/css/main.dd766fd0.css",
+    "static/js/main.9e1af698.js"
   ]
 }
