@@ -1,9 +1,9 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
-from .models import News
-from .serializers import NewsSerializer
+from .models import News, Comment
+from .serializers import NewsSerializer, CommentSerializer
 import telebot
 from django.conf import settings
 from django.utils import timezone
@@ -85,3 +85,31 @@ class NewsViewSet(viewsets.ModelViewSet):
                     user.telegram_chat_id = None
                     user.save()
 
+
+class CommentView(viewsets.ModelViewSet):
+    # Класс для работы с комментариями
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        # Получение списка комментов к новости
+        return Comment.objects.filter(
+            news_id=self.kwargs.get('news_id'),
+            is_deleted=False
+        ).select_related('author', 'news') # Подгрузка связанных объектов (чтобы не загружать весь объект новости)
+    
+
+    def get_permissions(self):
+        # Проверка прав для работы с комментариями
+
+        if self.action == 'create':
+            self.permission_classes = [permissions.IsAuthenticated]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            self.permission_classes = [permissions.IsAuthenticated]
+        else:
+            self.permission_classes = [permissions.AllowAny]
+
+        return super().get_permissions()
+    
+    def create(self, serializer):
+        # Создание комментария
+        pass
