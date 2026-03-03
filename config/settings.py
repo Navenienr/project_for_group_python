@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.news',
     'apps.torrents',
     'apps.notifications',
+    'apps.games'
 ]
 
 MIDDLEWARE = [
