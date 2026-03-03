@@ -1007,6 +1007,7 @@ def run_import():
             defaults={
                 'version': item['version'],
                 'developer': item['developer'],
+                'release_date': item['release_date'],
                 'min_requirements': item['min_requirements'].strip(),
                 'rec_requirements': item['rec_requirements'].strip(),
                 'description': item['description'].strip(),

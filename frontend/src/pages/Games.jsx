@@ -9,9 +9,10 @@ import SkeletonLoader from '../components/SkeletonLoader'
 
 const context = require.context('../img/', true, /LOGO\.jpeg$/)
 const imageMap = {}
+
 context.keys().forEach((path) => {
     const parts = path.split('/')
-    const folderName = parts[1] // Название папки
+    const folderName = parts[1]
     imageMap[folderName] = context(path)
 })
 
@@ -23,11 +24,11 @@ const Games = () => {
   useEffect(() => {
     const get_games = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/games/list/')
+        const response = await fetch('http://127.0.0.1:8000/api/games/shortlist/')
         const data = await response.json()
         
         const finalData = data.results || data
-        await new Promise(resolve => setTimeout(resolve, 800))
+        await new Promise(resolve => setTimeout(resolve, 500))
         setGames(finalData)
         setLoading(false)
       } catch (error) {
