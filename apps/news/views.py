@@ -6,6 +6,7 @@ from .models import News
 from .serializers import NewsSerializer
 import telebot
 from django.conf import settings
+from django.utils import timezone
 
 
 User = get_user_model()
@@ -44,7 +45,8 @@ class NewsViewSet(viewsets.ModelViewSet):
         # Публикация новости
         news = serializer.save(
             author=self.request.user,
-            is_published=True
+            is_published=True,
+            published_at=timezone.now()
         )
 
         self._send_telegram(news)
