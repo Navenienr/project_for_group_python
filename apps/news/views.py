@@ -15,6 +15,15 @@ TOKEN = '8733942341:AAGEpWvQnvvkMfaLLcO31TVRQ57RkpFj3cA'
 bot = telebot.TeleBot(TOKEN)
 
 
+class IsModeratorUser(permissions.BasePermission):
+    # Разрешение для модераторов (нужно для создания постов)
+    def has_permission(self, request, view):
+        if request.user and request.user.is_authenticated and request.user.is_moderator:
+            return True
+        return False
+
+
+
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
@@ -22,7 +31,7 @@ class NewsViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         # Проверка разрешений для публикации новости
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            self.permission_classes = [permissions.IsAdminUser]
+            self.permission_classes = [permissions.IsAdminUser | IsModeratorUser]
         else:
             self.permission_classes = [permissions.AllowAny]
 
