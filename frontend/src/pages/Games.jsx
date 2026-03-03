@@ -1,48 +1,81 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useLayoutEffect, useMemo } from 'react'
 import Header from "../components/Header"
 import S from '../style/Games.module.css'
 import Sidebar from '../components/Sidebar'
 import Game_card from '../components/Game_card'
 import Logo from '../img/Atomic Heart/LOGO.jpeg'
 import { NavLink } from 'react-router-dom'
+import SkeletonLoader from '../components/SkeletonLoader'
+
+const context = require.context('../img/', true, /LOGO\.jpeg$/)
+const imageMap = {}
+context.keys().forEach((path) => {
+    const parts = path.split('/')
+    const folderName = parts[1] // Название папки
+    imageMap[folderName] = context(path)
+})
 
 const Games = () => {
-  const context = require.context('../img/', true, /LOGO\.jpeg$/)
+  const [games, setGames] = useState([])
+  const [loading, setLoading] = useState(true)
   const limit = 16
 
-  const gamesList = context.keys().map((path, index) => {
-    const imagePath = context(path)
-    const folderName = path.split('/')[1];
-
-    return {
-      id: index,
-      folder: folderName,
-      title: folderName.replace(/-/g, ' '), 
-      image: imagePath
+  useEffect(() => {
+    const get_games = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/games/list/')
+        const data = await response.json()
+        
+        const finalData = data.results || data
+        await new Promise(resolve => setTimeout(resolve, 800))
+        setGames(finalData)
+        setLoading(false)
+      } catch (error) {
+        console.error('Ошибка:', error)
+        setLoading(false)
+      }
     }
-  })
+    get_games()
+  }, [])
 
-  return (
+  const renderedGames = useMemo(() => {
+    return games.slice(0, limit).map((game) => (
+      <NavLink 
+        key={game.id} 
+        to={`/game/${game.id}`} 
+        style={{ textDecoration: 'none' }}
+      >
+        <Game_card 
+          image={imageMap[game.name] || Logo} 
+          title={game.name} 
+        />
+      </NavLink>
+    ))
+  }, [games]) 
+
+
+ return (
     <div>
-        <Header/>
+        <Header />
         <div className={S.main_container}>
-            <Sidebar/>
+            <Sidebar />
             <div className={S.content}>
                 <div className={S.game_content}>
-                    {gamesList.slice(0, limit).map((game) => (
-                      <NavLink 
-                        key={game.id} 
-                        to={`/game/${game.folder}`} 
-                        style={{ textDecoration: 'none' }}
-                      >
-                        <Game_card image={game.image} title={game.title} />
-                      </NavLink>
-                    ))}
+                    {loading ? (
+                        Array(12).fill(0).map((item, index) => (
+                            <div key={index} className={S.skeleton_item }>
+                                <div className={S.skeleton_card}></div>
+                                <div className={S.skeleton_title}></div>
+                            </div>
+                        ))
+                    ) : (
+                        renderedGames
+                    )}
                 </div>
             </div>
         </div>
     </div>
-  )
+ )
 }
 
-export default Games
+export default Games;

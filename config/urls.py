@@ -21,6 +21,7 @@ urlpatterns = [
     path('api/news/', include('apps.news.urls')),
     path('api/torrents/', include('apps.torrents.urls')),
     path('api/notifications/', include('apps.notifications.urls')),
+    path('api/games/', include('apps.games.urls')),
 ]
 
 # Serve media files in development
