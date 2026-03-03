@@ -3,12 +3,13 @@ import Header from '../components/Header'
 import Sidebar from '../components/Sidebar'
 import S from '../style/Game.module.css'
 import Card from '../img/baldursgate.jpg'
-import { useParams } from 'react-router-dom'
+import { NavLink, useParams } from 'react-router-dom'
 
 const Game = () => {
     const { id } = useParams() 
     const [game, setGame] = useState(null)
     const [activeIndex, setActiveIndex] = useState(0)
+    const [isFavorite, setIsFavorite] = useState(false)
 
  
     useEffect(() => {
@@ -55,8 +56,6 @@ const Game = () => {
 
     const nextSlide = () => setActiveIndex((prev) => (prev === displayScreens.length - 1 ? 0 : prev + 1))
     const prevSlide = () => setActiveIndex((prev) => (prev === 0 ? displayScreens.length - 1 : prev - 1))
-
-
 
     return (
         <div className={S.shader}>
@@ -117,8 +116,23 @@ const Game = () => {
                                         <p className={S.text_value}>{game.release_date || 'Неизвестна'}</p>
                                     </div>
                                 </div>
-                                <button className={S.btn_download}>Скачать</button>
+                                 <div className={S.actions_container}>
+                                <a href={game.download_link} className={S.btn_download}>
+                                    Скачать
+                                </a>
+                                
+                                <button 
+                                    className={`${S.btn_favorite_text} ${isFavorite ? S.active : ''}`}
+                                    onClick={() => setIsFavorite(!isFavorite)}
+                                >
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                    </svg>
+                                    {isFavorite ? 'Убрать из избранного' : 'В избранное'}
+                                </button>
                             </div>
+                            </div>
+                           
                         </div>
                     </div>
                     <div className={S.details_wrapper}>

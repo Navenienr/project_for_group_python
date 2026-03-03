@@ -66,6 +66,12 @@ class Game(models.Model):
         verbose_name='описание'
     )
 
+    download_link = models.TextField(
+        null=True, 
+        blank=True, 
+        verbose_name="Ссылка на скачивание"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления")
 
     class Meta:

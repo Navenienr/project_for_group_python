@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Header from "../components/Header"
 import S from '../style/Profile.module.css'
 import Game_card from "../components/Game_card"
+import FavouriteItem from "../components/FavouriteItem"
+import Logo from '../img/Atomic Heart/LOGO.jpeg'
 import { NavLink } from 'react-router-dom'
 
 const Profile = () => {
@@ -22,18 +24,34 @@ const Profile = () => {
     setData(prev => ({ ...prev, [field]: value }))
   }
 
-  // Логика картинок
+
   const context = require.context('../img/', true, /LOGO\.jpeg$/)
-  const gamesList = context.keys().map((path, index) => {
-    const imagePath = context(path)
-    const folderName = path.split('/')[1] 
-    return {
-      id: index,
-      folder: folderName,
-      title: folderName.replace(/-/g, ' '), 
-      image: imagePath
-    }
+  const imageMap = {}
+  context.keys().forEach((path) => {
+      const folderName = path.split('/')[1]
+      imageMap[folderName] = context(path)
   })
+
+
+  const [games, setGames] = useState([])
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+
+        const response = await fetch('http://127.0.0.1:8000/api/games/list')
+        const data = await response.json()
+        
+        const finalData = data.results || data
+        setGames(finalData.slice(0, 8))
+        setLoading(false)
+      } catch (error) {
+        console.error('Ошибка:', error)
+        setLoading(false)
+      }
+    }
+    fetchFavorites()
+  }, [])
 
 
 return (
@@ -98,13 +116,19 @@ return (
         </div>
         <div className={S.content}>
           <h2 className={S.heading}>Избранное</h2>
-          <div className={S.game_content}>
-            {gamesList.slice(0, 16).map((game) => (
-              <NavLink key={game.id} to={`/game/${game.folder}`} style={{ textDecoration: 'none' }}>
-                <Game_card image={game.image} title={game.title} />
-              </NavLink>
-            ))}
-          </div>
+            <div className={S.favorite_list}>
+              {loading ? (
+                <div style={{color: '#fff'}}>Загрузка списка...</div>
+            ) : (
+                games.map((game) => (
+                    <FavouriteItem 
+                        key={game.id} 
+                        game={game} 
+                        logo={imageMap[game.name] || Logo} 
+                    />
+                ))
+            )}
+            </div>
         </div>
 
       </div>
