@@ -3,10 +3,9 @@ import { NavLink } from 'react-router-dom';
 import S from '../style/FavouriteItem.module.css';
 
 const Favourites = ({ game, logo }) => {
-    // В будущем здесь будет логика удаления из БД, пока просто стейт
     const [isFavorite, setIsFavorite] = useState(true);
 
-    if (!isFavorite) return null; // Скрываем, если убрали из избранного
+    if (!isFavorite) return null;
 
     return (
         <div className={S.favorite_row}>

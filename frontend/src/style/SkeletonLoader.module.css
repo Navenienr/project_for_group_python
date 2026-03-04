@@ -1,0 +1,147 @@
+.grid_wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 30px 35px; 
+    width: 100%; 
+    padding-left: 4%;
+    padding-top: 2%;
+    box-sizing: border-box;
+}
+
+
+.card_item {
+    width: 225px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; 
+    justify-self: center;
+}
+
+.card_item .shimmer_box {
+    width: 100%;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+
+.card_title_line {
+    width: 180px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    margin-top: 15px;
+    position: relative;
+    overflow: hidden;
+}
+
+.shimmer_box, .title_line, .subtitle_line {
+    background: rgba(0, 0, 0, 0.2); 
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    position: relative;
+    overflow: hidden;
+}
+
+.shimmer_box::after, .title_line::after, .subtitle_line::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 250%; 
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.155) 45%,
+        rgba(111, 87, 166, 0.318) 50%,
+        rgba(255, 255, 255, 0.08) 55%,
+        transparent 100%
+    );
+    animation: shimmer 3s infinite linear;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+
+.list_wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+.list_item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 10px 25px;
+    height: 90px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+
+.details_skeleton_wrapper {
+    width: 100%;
+}
+
+.card_container_skeleton {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    justify-content: center;
+    width: 100%;
+}
+
+.game_img_skeleton {
+    flex: 1;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.game_heading_skeleton {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    height: 90px;
+}
+
+.game_info_wrapper_skeleton {
+    width: 370px;
+    margin-top: 110px;
+}
+
+.game_info_skeleton_box {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    padding: 30px 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 615px;
+}
+
+.actions_skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.thumbs_skeleton {
+    display: flex;
+    gap: 10px;
+}

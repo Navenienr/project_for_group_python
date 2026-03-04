@@ -38,8 +38,9 @@ const Games = () => {
         setGames(data.results)
         setHasNext(!!data.next)
         setHasPrev(!!data.previous)
-        // Вычисляем общее кол-во страниц (например, если лимит 16)
+        // вычисление количества страниц 
         setTotalPages(Math.ceil(data.count / 16)) 
+        await new Promise(resolve => setTimeout(resolve, 300))
         setLoading(false)
       } catch (error) {
         console.error('Ошибка:', error)
@@ -72,16 +73,7 @@ const Games = () => {
             <Sidebar />
             <div className={S.content}>
                 <div className={S.game_content}>
-                    {loading ? (
-                        Array(12).fill(0).map((item, index) => (
-                            <div key={index} className={S.skeleton_item }>
-                                <div className={S.skeleton_card}></div>
-                                <div className={S.skeleton_title}></div>
-                            </div>
-                        ))
-                    ) : (
-                        renderedGames
-                    )}
+                    {loading ? <SkeletonLoader type="card" count={12} /> : renderedGames}
                 </div>
                 <div className={S.pagination}>
                   <button onClick={() => setCurrentPage(prev => prev - 1)} disabled={!hasPrev}className={S.page_btn}>
