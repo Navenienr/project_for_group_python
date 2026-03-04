@@ -8,6 +8,8 @@ from apps.core.serializers import UserProfileSerializer
 
 class NewsSerializer(serializers.ModelSerializer):
     # Сериализатор для новостей
+
+    comments_count = serializers.IntegerField(source='comments.count', read_only=True)
     class Meta:
         model = News
         fields = '__all__'
@@ -39,7 +41,7 @@ class CommentSerializer(serializers.ModelSerializer):
             'can_delete'
         ]
         extra_kwargs = {
-            'content': {'max_length': 1000}
+            'content': {'max_length': 1000} # ограничение на длину комментария
         }
 
         read_only_fields = ['author', 'created_at', 'updated_at', 'is_edited', 'is_deleted']
