@@ -94,7 +94,7 @@ class CommentView(viewsets.ModelViewSet):
     def get_queryset(self):
         # Получение списка комментов к новости
         return Comment.objects.filter(
-            news_id=self.kwargs.get('news_id'),
+            news_id=self.kwargs.get('news_pk'),
             is_deleted=False
         ).select_related('author', 'news') # Подгрузка связанных объектов (чтобы не загружать весь объект новости)
     
@@ -111,7 +111,7 @@ class CommentView(viewsets.ModelViewSet):
 
         return super().get_permissions()
     
-    def perf_create(self, serializer):
+    def perform_create(self, serializer):
         # Создание комментария
         news = News.objects.get(pk=self.kwargs['news_pk'])
         serializer.save(
@@ -120,7 +120,7 @@ class CommentView(viewsets.ModelViewSet):
         )
 
     
-    def perf_update(self, serializer):
+    def perform_update(self, serializer):
         # Обновление комментария
         comment = self.get_object()
         if comment.author.id != self.request.user.id:
@@ -129,7 +129,7 @@ class CommentView(viewsets.ModelViewSet):
         serializer.save(is_edited=True)
 
 
-    def perf_destroy(self, instance):
+    def perform_destroy(self, instance):
         # Удаление комментария
         can_delete = (
             instance.author.id == self.request.user.id
