@@ -24,7 +24,12 @@ const Sidebar = () => {
                 <ul className={S.sidebar_menu}>
                     {displayedGenres.map(genre => (
                         <li key={genre.id}>
-                            <a href={`#/genre/${genre.id}`}>{genre.name}</a>
+                            <NavLink 
+                                to={`/games?genre=${genre.id}`} 
+                                className={({ isActive }) => isActive ? S.active : ''}
+                            >
+                                {genre.name}
+                            </NavLink>
                         </li>
                     ))}
                     {genres.length > 7 && (
@@ -41,7 +46,7 @@ const Sidebar = () => {
             </div>
 
             <div className={S.sidebar_section}>
-                <h3 className={S.sidebar_title}>Статьи</h3>
+                <NavLink to='/' className={S.sidebar_title}>Статьи</NavLink>
                 <ul className={S.sidebar_menu}>
                     <li><a href="#">Новые</a></li>
                     <li><a href="#">Популярные</a></li>

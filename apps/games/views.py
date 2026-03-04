@@ -9,8 +9,13 @@ class GameListView(generics.ListAPIView):
 
 
 class GameListShortView(generics.ListAPIView):
-    queryset = Game.objects.all()
     serializer_class = GameShortSerializer
+    def get_queryset(self):
+        queryset = Game.objects.all()
+        genre_id = self.request.query_params.get('genre')
+        if genre_id:
+            queryset = queryset.filter(genres__id=genre_id)
+        return queryset
 
 class GameDetailView(generics.RetrieveAPIView):
     queryset = Game.objects.all()

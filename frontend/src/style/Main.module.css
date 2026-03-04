@@ -1,4 +1,4 @@
-* {
+*{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -12,441 +12,83 @@ body {
     line-height: 1.6;
 }
 
-
-
-.main_nav {
-    display: flex;
-    align-items: center;
-}
-
-.profile_section {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-
-/* Hero Section */
-.hero_section {
-    margin-top: 0;
-    height: 100vh;
-    background: 
-        linear-gradient(135deg, 
-            rgba(10, 14, 20, 0.8) 0%, 
-            rgba(21, 26, 37, 0.7) 100%),
-        url('') center/cover no-repeat;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.6s ease-out;
-    padding-top: 120px;
-}
-
-.hero_section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
-    animation: pulse 6s ease-in-out infinite;
-}
-
-.hero_content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
+.shader {
+    background-color: rgb(15, 15, 24);
     width: 100%;
-    max-width: 600px;
-    padding: 0 20px;
-}
-
-.hero_search_container {
+    min-height: 100vh;
     position: relative;
-    max-width: 500px;
-    margin: 0 auto;
+    overflow-x: hidden;
 }
 
-
-
-/* Main Container */
 .main_container {
     display: flex;
-    max-width: 1400px;
+    max-width: 1800px;
     margin: 0 auto;
-    padding: 60px 20px;
+    padding: 100px 20px 60px 20px;
     gap: 20px;
     position: relative;
     z-index: 10;
     min-height: 100vh;
-
+    align-items: flex-start; 
 }
 
 
-/* Content Styles */
+.sidebar_wrapper {
+    width: 290px; 
+    flex-shrink: 0;
+}
 .content {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    margin-left: -10px;
-    margin-top: 40px;
-}
-
-/* Стили для новостных постов */
-.news_post {
     background: linear-gradient(135deg, 
         rgba(255, 255, 255, 0.1) 0%, 
         rgba(255, 255, 255, 0.05) 50%,
         rgba(255, 255, 255, 0.02) 100%);
-    border-radius: 25px;
-    padding: 50px 45px;
+    border-radius: 20px;
+    padding: 35px 45px;
     backdrop-filter: blur(25px) saturate(180%);
-    /* border: 1px solid rgba(255, 255, 255, 0.15); */
     border: 1px solid rgba(99, 102, 241, 0.4);
     border-left: none;
-    box-shadow: 
-        20px 0 60px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        inset -1px 0 0 rgba(99, 102, 241, 0.2);
-    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    position: relative;
-    overflow: hidden;
-    /* box-shadow: 
-        0 20px 80px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.3); */
-    min-height: 600px;
+    box-shadow: 20px 0 60px rgba(0, 0, 0, 0.5);
+    
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-
-.post_header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 35px;
-    position: relative;
-    z-index: 2;
-}
-
-.post_author {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.author_avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    /* box-shadow: 
-        0 8px 25px rgba(99, 102, 241, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3); */
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s ease;
-}
-
-
-.author_info {
+.posts_list {
     display: flex;
     flex-direction: column;
+    gap: 40px; 
+    width: 100%; 
+    max-width: 100%; 
 }
 
-.author_name {
-    font-weight: 700;
-    color: #ffffff;
-    font-size: 22px;
-    margin-bottom: 8px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.post_time {
-    font-size: 16px;
-    color: #cbd5e1;
-    font-weight: 500;
-}
-
-.post_category {
-    background: linear-gradient(135deg, 
-        rgba(99, 102, 241, 0.4), 
-        rgba(139, 92, 246, 0.4));
-    color: #ffffff;
-    padding: 12px 24px;
-    border-radius: 30px;
-    font-size: 16px;
-    font-weight: 700;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(15px);
-}
-
-.post_content {
-    position: relative;
-    z-index: 2;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 30px;
-}
-
-.post_title {
-    font-size: 36px;
+.section_title {
+    font-size: 28px;
     font-weight: 800;
     color: #ffffff;
-    margin-bottom: 25px;
-    line-height: 1.3;
-    background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.post_excerpt {
-    color: #e2e8f0;
-    line-height: 1.8;
-    margin-bottom: 30px;
-    font-size: 20px;
-    flex-grow: 1;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-/* Контент изображения */
-.post_image_content {
-    width: 100%;
-    height: 300px;
-    border-radius: 15px;
-    overflow: hidden;
-    margin: 20px 0;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 18px;
-}
-
-.post_stats {
-    display: flex;
-    gap: 40px;
-    font-size: 18px;
-    color: #cbd5e1;
-    padding-top: 30px;
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    position: relative;
-    z-index: 2;
-}
-
-.post_stats span {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    transition: all 0.4s ease;
-    padding: 12px 20px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.post_stats span:hover {
-    color: #ffffff;
-    background: rgba(99, 102, 241, 0.25);
-    transform: translateY(-3px);
-    box-shadow: 
-        0 8px 25px rgba(99, 102, 241, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    border-color: rgba(99, 102, 241, 0.4);
+    margin-bottom: 20px;
+    border-left: 4px solid #6366f1;
+    padding-left: 15px;
 }
 
 
-/* Стили для активного состояния */
-.sidebar_menu a.active {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.2));
-    color: #e0e7ff;
-    border-color: rgba(99, 102, 241, 0.4);
-}
-
-.post_stats span.active {
-    color: #6366f1;
-    background: rgba(99, 102, 241, 0.2);
-}
-
-
-/* Responsive Design */
 @media (max-width: 1024px) {
     .main_container {
-        gap: 25px;
-    }
-    
-    .sidebar {
-        width: 250px;
-        margin-left: -30px;
-        height: 80vh;
-    }
-    
-    .news_post {
-        min-height: 550px;
-        padding: 40px 35px;
+        padding-top: 80px;
+        gap: 15px;
     }
 }
 
 @media (max-width: 768px) {
     .main_container {
         flex-direction: column;
-        padding: 40px 15px;
-        gap: 25px;
-    }
-    
-    .sidebar {
-        width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-        height: auto;
-        position: static;
-        margin-bottom: 20px;
-        border-radius: 15px;
-        border-left: 1px solid rgba(99, 102, 241, 0.4);
-    }
-    
-    .sidebar_scroll_container {
-        height: auto;
-        overflow-y: visible;
-        padding-right: 0;
-    }
-    
-    .hero_section {
-        height: 100vh;
-        padding-top: 100px;
-    }
-    
-    .hero_content {
-        max-width: 90%;
-    }
-    
-    .hero_search_input {
-        padding: 16px 20px;
-        font-size: 16px;
+        padding-top: 70px;
     }
     
     .content {
-        margin-left: 0;
-        gap: 25px;
-    }
-    
-    .news_post {
-        padding: 35px 30px;
-        min-height: 500px;
-        border-radius: 20px;
-    }
-    
-    .post_header {
-        flex-direction: column;
-        gap: 20px;
-        align-items: flex-start;
-    }
-    
-    .post_title {
-        font-size: 28px;
-    }
-    
-    .post_stats {
-        gap: 25px;
-        flex-wrap: wrap;
-    }
-    
-    .author_avatar {
-        width: 70px;
-        height: 70px;
-    }
-    
-    .post_excerpt {
-        font-size: 18px;
-    }
-}
-
-@media (max-width: 480px) {
-    .main_container {
-        padding: 30px 10px;
-    }
-    
-    .hero_section {
-        height: 100vh;
-        padding-top: 80px;
-    }
-    
-    .hero_content {
-        max-width: 95%;
-    }
-    
-    .hero_search_input {
-        padding: 14px 18px;
-        font-size: 14px;
-    }
-    
-    .sidebar {
-        padding: 20px;
-    }
-    
-    .sidebar_menu a {
-        padding: 8px 12px;
-        font-size: 14px;
-    }
-    
-    .news_post {
-        padding: 30px 25px;
-        border-radius: 18px;
-        min-height: 450px;
-    }
-    
-    .post_title {
-        font-size: 24px;
-    }
-    
-    .post_stats {
-        gap: 15px;
-    }
-    
-    .post_stats span {
-        font-size: 16px;
-        padding: 10px 16px;
-    }
-    
-    .author_avatar {
-        width: 60px;
-        height: 60px;
-        font-size: 20px;
-    }
-    
-    .author_name {
-        font-size: 18px;
-    }
-    
-    .post_time {
-        font-size: 14px;
-    }
-    
-    .post_excerpt {
-        font-size: 16px;
-    }
-    
-    .sidebar_title {
-        font-size: 13px;
+        padding: 25px 20px;
+        border-left: 1px solid rgba(99, 102, 241, 0.4); 
     }
 }

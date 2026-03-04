@@ -10,11 +10,14 @@ export default function Main() {
         <Header/>
         <div className={S.main_container}>
             <Sidebar/>
-            <main className={S.content}>
-                <Post/>
-                <Post/>
-                <Post/>
-            </main>
+            <div className={S.content}>
+                <h2 className={S.section_title}>Статьи</h2>
+                <div className={S.posts_list}>
+                    <Post />
+                    <Post />
+                    <Post />
+                </div>
+            </div>
         </div>
     </div>
   )

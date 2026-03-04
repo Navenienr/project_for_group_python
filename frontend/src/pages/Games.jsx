@@ -6,6 +6,7 @@ import Game_card from '../components/Game_card'
 import Logo from '../img/Atomic Heart/LOGO.jpeg'
 import { NavLink } from 'react-router-dom'
 import SkeletonLoader from '../components/SkeletonLoader'
+import { useLocation } from 'react-router-dom';
 
 const context = require.context('../img/', true, /LOGO\.jpeg$/)
 const imageMap = {}
@@ -19,27 +20,34 @@ context.keys().forEach((path) => {
 const Games = () => {
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(true)
-  const limit = 16
-
+  const location = useLocation(); // 2. Подключаем хук для отслеживания URL
+  
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
   const [hasNext, setHasNext] = useState(false)   
   const [hasPrev, setHasPrev] = useState(false) 
 
-
-
-
   useEffect(() => {
     const get_games = async (page) => {
+      setLoading(true)
       try {
-        const response = await fetch(`http://127.0.0.1:8000/api/games/shortlist/?page=${page}`)
+        //  поиск ID жанра в параметрах ссылки (?genre=...)
+        const searchParams = new URLSearchParams(location.search);
+        const genreId = searchParams.get('genre');
+
+        let url = `http://127.0.0.1:8000/api/games/shortlist/?page=${page}`;
+        if (genreId) {
+            url += `&genre=${genreId}`;
+        }
+
+        const response = await fetch(url)
         const data = await response.json();
         
-        setGames(data.results)
+        setGames(data.results || [])
         setHasNext(!!data.next)
         setHasPrev(!!data.previous)
-        // вычисление количества страниц 
         setTotalPages(Math.ceil(data.count / 16)) 
+        
         await new Promise(resolve => setTimeout(resolve, 300))
         setLoading(false)
       } catch (error) {
@@ -48,10 +56,15 @@ const Games = () => {
       }
     }
     get_games(currentPage)
-  }, [currentPage])
+  }, [currentPage, location.search])
+
+  // сброс страницы на 1, если пользователь сменил жанр
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [location.search]);
 
   const renderedGames = useMemo(() => {
-    return games.slice(0, limit).map((game) => (
+    return games.map((game) => (
       <NavLink 
         key={game.id} 
         to={`/game/${game.id}`} 
