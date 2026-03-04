@@ -5,6 +5,7 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from .models import User
+from apps.games.serializers import GameSerializer
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -50,7 +51,20 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     # Сериализатор профиля пользователя (для фронтенда)
 
+    favorite_games = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'tg_username', 'date_joined', 'is_moderator')
-        read_only_fields = ['id', 'date_joined', 'is_moderator']        
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'tg_username', 'date_joined', 'is_moderator', 'favorite_games')
+        read_only_fields = ['id', 'date_joined', 'is_moderator']
+
+    def get_favorite_games(self, obj):
+        # Получение списка избранных игр
+        from apps.games.models import FavoriteGame
+        favorites = FavoriteGame.objects.filter(
+            user=obj
+        ).select_related('game')
+
+        games = [favorite.game for favorite in favorites] # Создаем список игр
+
+        return GameSerializer(games, many=True, context=self.context).data

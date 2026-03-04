@@ -4,7 +4,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, MaxLengthValidator
 
 
 class Category(models.Model):
@@ -187,7 +187,7 @@ class Comment(models.Model):
     
     content = models.TextField(
         verbose_name='Содержание комментария',
-        validators=[MinLengthValidator(3)]
+        validators=[MinLengthValidator(3), MaxLengthValidator(1000)]
     )
     
     created_at = models.DateTimeField(

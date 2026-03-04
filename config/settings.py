@@ -2,6 +2,7 @@
 Django settings for game_news_service project.
 """
 from pathlib import Path
+from decouple import config
 import os
 
 # from decouple import config
@@ -191,3 +192,6 @@ SPECTACULAR_SETTINGS = {
 
 
 AUTH_USER_MODEL = 'core.User'
+
+# Настройки Telegram-бота
+TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN')

@@ -4,7 +4,7 @@ from .models import Game, Genre, Language
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = ['id', 'name']
+        fields = '__all__'
 
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:

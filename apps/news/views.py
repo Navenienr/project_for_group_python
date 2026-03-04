@@ -1,18 +1,28 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
-from .models import News
-from .serializers import NewsSerializer
+from .models import News, Comment, NewsLike
+from .serializers import NewsSerializer, CommentSerializer
+from django.conf import settings
 import telebot
 from django.conf import settings
+from django.utils import timezone
 
 
 User = get_user_model()
 
-TOKEN = '8733942341:AAGEpWvQnvvkMfaLLcO31TVRQ57RkpFj3cA'
 
-bot = telebot.TeleBot(TOKEN)
+bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
+
+
+class IsModeratorUser(permissions.BasePermission):
+    # Разрешение для модераторов (нужно для создания постов)
+    def has_permission(self, request, view):
+        if request.user and request.user.is_authenticated and request.user.is_moderator:
+            return True
+        return False
+
 
 
 class NewsViewSet(viewsets.ModelViewSet):
@@ -22,7 +32,7 @@ class NewsViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         # Проверка разрешений для публикации новости
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            self.permission_classes = [permissions.IsAdminUser]
+            self.permission_classes = [permissions.IsAdminUser | IsModeratorUser]
         else:
             self.permission_classes = [permissions.AllowAny]
 
@@ -35,7 +45,8 @@ class NewsViewSet(viewsets.ModelViewSet):
         # Публикация новости
         news = serializer.save(
             author=self.request.user,
-            is_published=True
+            is_published=True,
+            published_at=timezone.now()
         )
 
         self._send_telegram(news)
@@ -61,7 +72,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         
         text = f"""{news.title}
         {news.short_description}
-        Читать: https://#домен#/news/{news.id}
+        Читать: https://127.0.0.1:3000/news/{news.id}
         """
 
         for user in subscribers:
@@ -74,3 +85,79 @@ class NewsViewSet(viewsets.ModelViewSet):
                     user.telegram_chat_id = None
                     user.save()
 
+    @action(detail=True, methods=['post'])
+    def like(self, request, pk=None):
+        # Лайк новости
+        news = self.get_object()
+        like, created = NewsLike.objects.get_or_create(
+            news=news,
+            user=request.user
+        )
+
+        if not created:
+            like.delete() # Повторное нажатие убирает лайк
+            liked = False
+        else:
+            liked = True
+
+        return Response({
+            'liked': liked,
+            'likes_count': news.likes.count()
+        })
+
+
+class CommentView(viewsets.ModelViewSet):
+    # Класс для работы с комментариями
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        # Получение списка комментов к новости
+        return Comment.objects.filter(
+            news_id=self.kwargs.get('news_pk'),
+            is_deleted=False
+        ).select_related('author', 'news') # Подгрузка связанных объектов (чтобы не загружать весь объект новости)
+    
+
+    def get_permissions(self):
+        # Проверка прав для работы с комментариями
+
+        if self.action == 'create':
+            self.permission_classes = [permissions.IsAuthenticated]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            self.permission_classes = [permissions.IsAuthenticated]
+        else:
+            self.permission_classes = [permissions.AllowAny]
+
+        return super().get_permissions()
+    
+    def perform_create(self, serializer):
+        # Создание комментария
+        news = News.objects.get(pk=self.kwargs['news_pk'])
+        serializer.save(
+            author=self.request.user,
+            news=news
+        )
+
+    
+    def perform_update(self, serializer):
+        # Обновление комментария
+        comment = self.get_object()
+        if comment.author.id != self.request.user.id:
+            self.permission_denied(self.request, "Только автор может редактировать свои комментарии")
+
+        serializer.save(is_edited=True)
+
+
+    def perform_destroy(self, instance):
+        # Удаление комментария
+        can_delete = (
+            instance.author.id == self.request.user.id
+            or self.request.user.is_moderator
+            or self.request.user.is_superuser
+        )
+
+        if not can_delete:
+            self.permission_denied(self.request, "Только автор может удалять свои комментарии")
+
+        instance.delete()
