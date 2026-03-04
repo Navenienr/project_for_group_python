@@ -112,4 +112,31 @@ class CommentView(viewsets.ModelViewSet):
     
     def create(self, serializer):
         # Создание комментария
-        pass
+        news = News.objects.get(id=self.kwargs['news_id'])
+        serializer.save(
+            author=self.request.user,
+            news=news
+        )
+
+    
+    def update(self, serializer):
+        # Обновление комментария
+        comment = self.get_object()
+        if comment.author.id != self.request.user.id:
+            self.permission_denied(self.request, "Только автор может редактировать свои комментарии")
+
+        serializer.save(is_edited=True)
+
+
+    def destroy(self, instance):
+        # Удаление комментария
+        can_delete = (
+            instance.author.id == self.request.user.id
+            or self.request.user.is_moderator
+            or self.request.user.is_superuser
+        )
+
+        if not can_delete:
+            self.permission_denied(self.request, "Только автор может удалять свои комментарии")
+
+        instance.delete()
