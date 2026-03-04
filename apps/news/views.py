@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
 from .models import News, Comment, NewsLike
 from .serializers import NewsSerializer, CommentSerializer
+from django.conf import settings
 import telebot
 from django.conf import settings
 from django.utils import timezone
@@ -11,9 +12,8 @@ from django.utils import timezone
 
 User = get_user_model()
 
-TOKEN = '8733942341:AAGEpWvQnvvkMfaLLcO31TVRQ57RkpFj3cA'
 
-bot = telebot.TeleBot(TOKEN)
+bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
 
 
 class IsModeratorUser(permissions.BasePermission):
@@ -72,7 +72,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         
         text = f"""{news.title}
         {news.short_description}
-        Читать: https://#домен#/news/{news.id}
+        Читать: https://127.0.0.1:3000/news/{news.id}
         """
 
         for user in subscribers:

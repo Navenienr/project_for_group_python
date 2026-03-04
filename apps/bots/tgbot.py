@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 import os
 import django
 import telebot
+from django.conf import settings
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 django.setup()
@@ -9,8 +10,8 @@ django.setup()
 
 User = get_user_model()
 
-TOKEN = "8733942341:AAGEpWvQnvvkMfaLLcO31TVRQ57RkpFj3cA"
-bot = telebot.TeleBot(TOKEN)
+
+bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
 
 
 @bot.message_handler(commands=['start'])
