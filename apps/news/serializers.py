@@ -9,6 +9,8 @@ from apps.core.serializers import UserProfileSerializer
 class NewsSerializer(serializers.ModelSerializer):
     # Сериализатор для новостей
 
+    likes_count = serializers.IntegerField(source='likes.count', read_only=True)
+    is_liked = serializers.SerializerMethodField()
     comments_count = serializers.IntegerField(source='comments.count', read_only=True)
     class Meta:
         model = News
@@ -65,4 +67,4 @@ class CommentSerializer(serializers.ModelSerializer):
                 return True
             if request.user.is_superuser:
                 return True
-        return False
+        return False 

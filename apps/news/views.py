@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
-from .models import News, Comment
+from .models import News, Comment, NewsLike
 from .serializers import NewsSerializer, CommentSerializer
 import telebot
 from django.conf import settings
@@ -84,6 +84,26 @@ class NewsViewSet(viewsets.ModelViewSet):
                 if "chat not found" in str(e).lower():
                     user.telegram_chat_id = None
                     user.save()
+
+    @action(detail=True, methods=['post'])
+    def like(self, request, pk=None):
+        # Лайк новости
+        news = self.get_object()
+        like, created = NewsLike.objects.get_or_create(
+            news=news,
+            user=request.user
+        )
+
+        if not created:
+            like.delete() # Повторное нажатие убирает лайк
+            liked = False
+        else:
+            liked = True
+
+        return Response({
+            'liked': liked,
+            'likes_count': news.likes.count()
+        })
 
 
 class CommentView(viewsets.ModelViewSet):
