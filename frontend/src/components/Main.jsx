@@ -1,10 +1,35 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import S from '../style/Main.module.css'
 import Post from './Post'
 import Sidebar from './Sidebar'
 import Header from './Header'
+import SkeletonLoader from './SkeletonLoader'
 
 export default function Main() {
+  const [news, setNews] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const get_news = async () => {
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/news/news/');
+        const data = await response.json();
+            
+        const newsData = data.results || data;
+        setNews(newsData);
+        setLoading(false);
+        console.log(newsData)
+
+    } catch (error) {
+        console.error('Ошибка:', error)
+        setLoading(false) 
+        }
+    }
+    get_news()
+  }, [])
+  
+
+  
   return (
     <div>
         <Header/>
@@ -13,9 +38,15 @@ export default function Main() {
             <div className={S.content}>
                 <h2 className={S.section_title}>Статьи</h2>
                 <div className={S.posts_list}>
-                    <Post />
-                    <Post />
-                    <Post />
+                    {loading ? (
+                        <SkeletonLoader type="list" count={3} />
+                    ) : news.length > 0 ? (
+                        news.map((item) => (
+                            <Post key={item.id} data={item} />
+                        ))
+                    ) : (
+                        <p>Новостей пока нет...</p>
+                    )}
                 </div>
             </div>
         </div>

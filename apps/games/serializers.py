@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Game, Genre, Language
+from .models import Game, Genre, Language, FavoriteGame
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,3 +33,8 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ['id', 'name']
+
+class FavoriteGameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavoriteGame
+        fields = '__all__'

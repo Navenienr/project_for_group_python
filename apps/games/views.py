@@ -1,10 +1,14 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, viewsets, permissions, status
-from .models import Game, Genre, FavoriteGame
-from .serializers import GameSerializer, GameShortSerializer,GenreSerializer, FavoriteGameSerializer
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
-
+from .models import Game, Genre, FavoriteGame
+from .serializers import (
+    GameSerializer, 
+    GameShortSerializer, 
+    GenreSerializer, 
+    FavoriteGameSerializer
+)
 
 class GameListView(generics.ListAPIView):
     queryset = Game.objects.all()

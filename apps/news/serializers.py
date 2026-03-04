@@ -8,7 +8,7 @@ from apps.core.serializers import UserProfileSerializer
 
 class NewsSerializer(serializers.ModelSerializer):
     # Сериализатор для новостей
-
+    author_name = serializers.CharField(source='author.username', read_only=True)
     likes_count = serializers.IntegerField(source='likes.count', read_only=True)
     is_liked = serializers.SerializerMethodField()
     comments_count = serializers.IntegerField(source='comments.count', read_only=True)
@@ -17,8 +17,14 @@ class NewsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
         # Только для чтения
-        read_only_fields = ['author', 'views_count',
-                            'created_at', 'updated_at', 'published_at']
+        read_only_fields = ['author', 'views_count','created_at', 'updated_at', 'published_at']
+
+    def get_is_liked(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            # Проверяем, есть ли лайк от текущего пользователя в связанных объектах news.likes
+            return obj.likes.filter(user=request.user).exists()
+        return False
 
 
 class CommentSerializer(serializers.ModelSerializer):
