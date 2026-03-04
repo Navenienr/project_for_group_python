@@ -38,7 +38,9 @@ class CommentSerializer(serializers.ModelSerializer):
             'can_edit',
             'can_delete'
         ]
-        
+        extra_kwargs = {
+            'content': {'max_length': 1000}
+        }
 
         read_only_fields = ['author', 'created_at', 'updated_at', 'is_edited', 'is_deleted']
 
