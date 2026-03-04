@@ -88,6 +88,7 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 class CommentView(viewsets.ModelViewSet):
     # Класс для работы с комментариями
+    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
     def get_queryset(self):
@@ -110,16 +111,16 @@ class CommentView(viewsets.ModelViewSet):
 
         return super().get_permissions()
     
-    def create(self, serializer):
+    def perf_create(self, serializer):
         # Создание комментария
-        news = News.objects.get(id=self.kwargs['news_id'])
+        news = News.objects.get(pk=self.kwargs['news_pk'])
         serializer.save(
             author=self.request.user,
             news=news
         )
 
     
-    def update(self, serializer):
+    def perf_update(self, serializer):
         # Обновление комментария
         comment = self.get_object()
         if comment.author.id != self.request.user.id:
@@ -128,7 +129,7 @@ class CommentView(viewsets.ModelViewSet):
         serializer.save(is_edited=True)
 
 
-    def destroy(self, instance):
+    def perf_destroy(self, instance):
         # Удаление комментария
         can_delete = (
             instance.author.id == self.request.user.id
