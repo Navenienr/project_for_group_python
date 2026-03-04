@@ -75,3 +75,26 @@ class Game(models.Model):
 
     def __str__(self):
         return self.name
+
+class FavoriteGame(models.Model):
+    # Избранные игры пользователя
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='favorite_games',
+        verbose_name='Пользователь'
+    )
+    game = models.ForeignKey(
+        Game,
+        on_delete=models.CASCADE,
+        related_name='favorited_by',
+        verbose_name='Игра'
+    )
+
+    class Meta:
+        verbose_name = "Избранная игра"
+        verbose_name_plural = "Избранные игры"
+        unique_together = ['user', 'game']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.game.name}"
