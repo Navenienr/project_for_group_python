@@ -1,29 +1,46 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import S from '../style/Post.module.css'
 
 const Post = ({ data }) => {
   const [isLiked, setIsLiked] = useState(data.is_liked) 
   const [likesCount, setLikesCount] = useState(data.likes_count);
   const [isExpanded, setIsExpanded] = useState(false)
+  const [comments, setComments] = useState([])
 
   const date = new Date(data.published_at);
   const formattedDate = date.toLocaleDateString('ru-RU'); 
   const formattedTime = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
-  const handleLike = async (e) => {
-    e.stopPropagation()
-    let token = localStorage.getItem('userToken');
 
+
+  useEffect(() => {
+    const fetch_comments = async () => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/news/news/${data.id}/comments/`)
+            const commentData = await response.json();
+            setComments(commentData.results || commentData);
+            console.log(comments)
+        } 
+        catch (error) {
+            console.log("Ошибка загрузки комментов:", error)
+        }
+    } 
+    fetch_comments()
+  }, [data.id])
+
+    let token = localStorage.getItem('userToken');
     if (token) {
         token = token.replace(/"/g, '').trim(); 
     }
 
-    console.log("Чистый токен:", token);
+  const handleLike = async (e) => {
+    e.stopPropagation()
+    
     if (!token) {
         alert("Войдите в систему, чтобы поставить лайк!")
         return
     }
-    
-    
+
+
     try {
         const response = await fetch(`http://127.0.0.1:8000/api/news/news/${data.id}/like/`, {
             method: 'POST',
@@ -46,8 +63,44 @@ const Post = ({ data }) => {
         console.error("Ошибка при лайке:", error);
     }
     }
+    
+const [commentText, setCommentText] = useState("");
 
+const submitComment = async () => {
+    if (!commentText.trim()) return;
 
+    let token = localStorage.getItem('userToken');
+    if (token) token = token.replace(/"/g, '').trim();
+
+    if (!token) {
+        alert("Войдите, чтобы оставить комментарий");
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://127.0.0.1:8000/api/news/news/${data.id}/comments/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ content: commentText }) 
+        });
+
+        if (response.ok) {
+            const newComment = await response.json();
+            // обновление страницы для вывода нового коммента
+            setComments(prev => [...prev, newComment]);
+            setCommentText(""); 
+        } else {
+            const error = await response.json();
+            console.error("Ошибка сервера:", error);
+            alert("Не удалось отправить комментарий");
+        }
+    } catch (error) {
+        console.error("Ошибка сети:", error);
+    }
+};
 
   if (!data) return null;
 
@@ -105,12 +158,43 @@ const Post = ({ data }) => {
         </div>
 
         <div className={S.post_comments_sidebar}>
-            <h4 className={S.comments_title}>Комментарии</h4>
-            <div className={S.comments_list}>
-                <div className={S.comment_item}><span className={S.comment_user}>Система:</span> Комментариев пока нет</div>
-            </div>
+            <h4 className={S.comments_title}>Комментарии ({comments.length})</h4>
+                <div className={S.comments_list}>
+                    {comments.length > 0 ? (
+                        comments.map(comment => (
+                            <div key={comment.id} className={S.comment_item}>
+                                <span className={S.comment_user}>{comment.author.username || 'Юзер'}:</span> 
+                                {comment.text || comment.content}
+                            </div>
+                        ))
+                    ) : (
+                        <div className={S.comment_item}>
+                            <span className={S.comment_user}>Система:</span> Комментариев пока нет
+                        </div>
+                    )}
+                </div>
             <div className={S.comment_input_wrapper}>
-                <input type="text" placeholder="Написать..." className={S.comment_input} />
+                <input 
+                    type="text" 
+                    placeholder="Написать комментарий..." 
+                    className={S.comment_input}
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    // Отправка по Enter
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            submitComment();
+                        }
+                    }} 
+                />
+                <button 
+                    className={S.send_comment_btn} 
+                    onClick={submitComment}
+                    disabled={!commentText.trim()}
+                >
+                    ➤
+                </button>
             </div>
         </div>
     </div>

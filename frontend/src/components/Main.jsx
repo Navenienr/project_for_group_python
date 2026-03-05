@@ -10,11 +10,11 @@ export default function Main() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const get_news = async () => {
+    const get_news_and_comments = async () => {
       try {
-        let token = localStorage.getItem('userToken');
+        let token = localStorage.getItem('userToken')
         if (token) {
-            token = token.replace(/"/g, '').trim();
+            token = token.replace(/"/g, '').trim()
         }
 
         const requestHeaders = {
@@ -22,7 +22,7 @@ export default function Main() {
         }
 
         if (token) {
-          requestHeaders['Authorization'] = `Bearer ${token}`;
+          requestHeaders['Authorization'] = `Bearer ${token}`
         }
 
         const response = await fetch('http://127.0.0.1:8000/api/news/news/', {
@@ -32,17 +32,18 @@ export default function Main() {
 
         const data = await response.json();
         const newsData = data.results || data;
-        setNews(newsData);
+        setNews(newsData)
+
         await new Promise(resolve => setTimeout(resolve, 500));
-        setLoading(false);
+        setLoading(false)
 
       } catch (error) {
-        console.error('Ошибка:', error);
-        setLoading(false);
+        console.error('Ошибка:', error)
+        setLoading(false)
       }
-    };
-    get_news();
-  }, []);
+    }
+    get_news_and_comments ()
+  }, [])
 
   
   return (
