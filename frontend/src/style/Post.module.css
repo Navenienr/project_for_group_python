@@ -239,12 +239,47 @@ button.stat_item:hover {
     transition: all 0.3s ease;
     box-sizing: border-box; 
     margin-top: 10px; 
+    color: #fff;
 }
 
 .comment_input:focus {
     border-color: #8b5cf6;
     background: rgba(255, 255, 255, 0.08);
     box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+}
+
+
+.comment_input_wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+}
+
+.comment_input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+}
+
+.send_comment_btn {
+    background: none;
+    border: none;
+    color: #8b5cf6;
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.send_comment_btn:hover:not(:disabled) {
+    transform: scale(1.2);
+}
+
+.send_comment_btn:disabled {
+    color: #ccc;
+    cursor: default;
 }
 
 

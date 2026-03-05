@@ -8,6 +8,7 @@ from django.conf import settings
 import telebot
 from django.conf import settings
 from django.utils import timezone
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 User = get_user_model()
@@ -28,6 +29,7 @@ class IsModeratorUser(permissions.BasePermission):
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
+    authentication_classes = [JWTAuthentication]
 
     def get_permissions(self):
         if self.request.method == 'OPTIONS':
@@ -109,39 +111,92 @@ class NewsViewSet(viewsets.ModelViewSet):
             'likes_count': news.likes.count()
         })
 
+    @action(detail=True, methods=['get', 'post'], url_path='comments')
+    def comments(self, request, pk=None):
+        """Эндпоинт для работы с комментариями конкретной новости"""
+        news = self.get_object() # Получаем новость по ID из URL
+
+        if request.method == 'GET':
+            # Получаем все активные комментарии для этой новости
+            comments = news.comments.filter(is_deleted=False)
+            serializer = CommentSerializer(comments, many=True)
+            return Response(serializer.data)
+
+        if request.method == 'POST':
+            # Создаем новый комментарий
+            serializer = CommentSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(
+                    author=request.user,
+                    news=news
+                )
+                return Response(serializer.data, status=201)
+            return Response(serializer.errors, status=400)
+
 
 class CommentView(viewsets.ModelViewSet):
     # Класс для работы с комментариями
+    
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-
-    def get_queryset(self):
-        # Получение списка комментов к новости
-        return Comment.objects.filter(
-            news_id=self.kwargs.get('news_pk'),
-            is_deleted=False
-        ).select_related('author', 'news') # Подгрузка связанных объектов (чтобы не загружать весь объект новости)
-    
+    authentication_classes = [JWTAuthentication]
 
     def get_permissions(self):
-        # Проверка прав для работы с комментариями
-
-        if self.action == 'create':
-            self.permission_classes = [permissions.IsAuthenticated]
-        elif self.action in ['update', 'partial_update', 'destroy']:
-            self.permission_classes = [permissions.IsAuthenticated]
-        else:
-            self.permission_classes = [permissions.AllowAny]
-
+        # 1. ОБЯЗАТЕЛЬНО: OPTIONS должен быть доступен всем для работы CORS
+        if self.request.method == 'OPTIONS':
+            return [permissions.AllowAny()]
         return super().get_permissions()
-    
+
+    def get_queryset(self):
+        # 2. Безопасное получение news_pk
+        news_pk = self.kwargs.get('news_pk')
+        if not news_pk:
+            return Comment.objects.none()
+            
+        return Comment.objects.filter(
+            news_id=news_pk,
+            is_deleted=False
+        ).select_related('author', 'news')
+
     def perform_create(self, serializer):
-        # Создание комментария
-        news = News.objects.get(pk=self.kwargs['news_pk'])
-        serializer.save(
-            author=self.request.user,
-            news=news
-        )
+        # 3. Проверка существования новости перед сохранением
+        news_pk = self.kwargs.get('news_pk')
+        try:
+            news = News.objects.get(pk=news_pk)
+            serializer.save(author=self.request.user, news=news)
+        except News.DoesNotExist:
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError({"detail": "Новость не найдена"})
+
+    # def get_queryset(self):
+    #     # Получение списка комментов к новости
+    #     return Comment.objects.filter(
+    #         news_id=self.kwargs.get('news_pk'),
+    #         is_deleted=False
+    #     ).select_related('author', 'news') # Подгрузка связанных объектов (чтобы не загружать весь объект новости)
+    
+
+    # def get_permissions(self):
+    #     # Проверка прав для работы с комментариями
+    #     if self.request.method == 'OPTIONS':
+    #         return [permissions.AllowAny()]
+
+    #     if self.action == 'create':
+    #         self.permission_classes = [permissions.IsAuthenticated]
+    #     elif self.action in ['update', 'partial_update', 'destroy']:
+    #         self.permission_classes = [permissions.IsAuthenticated]
+    #     else:
+    #         self.permission_classes = [permissions.AllowAny]
+
+    #     return super().get_permissions()
+    
+    # def perform_create(self, serializer):
+    #     # Создание комментария
+    #     news = News.objects.get(pk=self.kwargs['news_pk'])
+    #     serializer.save(
+    #         author=self.request.user,
+    #         news=news
+    #     )
 
     
     def perform_update(self, serializer):

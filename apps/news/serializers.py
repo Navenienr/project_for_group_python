@@ -38,7 +38,6 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = [
             'id',
-            'news',
             'author',
             'content',
             'created_at',
@@ -52,7 +51,7 @@ class CommentSerializer(serializers.ModelSerializer):
             'content': {'max_length': 1000} # ограничение на длину комментария
         }
 
-        read_only_fields = ['author', 'created_at', 'updated_at', 'is_edited', 'is_deleted']
+        read_only_fields = ['author', 'created_at', 'updated_at', 'is_edited', 'is_deleted', 'news' ]
 
     def get_can_edit(self, obj):
         # Проверка, может ли пользователь редактировать комментарий
