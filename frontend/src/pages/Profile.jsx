@@ -5,16 +5,46 @@ import FavouriteItem from "../components/FavouriteItem"
 import Logo from '../img/Atomic Heart/LOGO.jpeg'
 
 const Profile = () => {
-  const [isEditing, setIsEditing] = useState(false)
-  const [data, setData] = useState({
-    username: localStorage.getItem('userName') || 'jerrytraitor',
-    name: 'Jerry',
-    email: 'jerry@gmail.com',
-    telegram: '@jerryrat',
-  })
-
+  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [games, setGames] = useState([])
-  const [loading, setLoading] = useState(true)
+  
+  const [data, setData] = useState({
+    username: '',
+    name: '',
+    email: '',
+    telegram: '',
+  });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem('userToken')?.replace(/"/g, '').trim();
+      
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/core/profile/', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const profileData = await response.json();
+          setData({
+            username: profileData.username,
+            name: profileData.first_name || 'Не указано',
+            email: profileData.email,
+            telegram: profileData.telegram_chat_id || '@не_привязан', 
+          });
+        }
+      } catch (error) {
+        console.error('Ошибка загрузки профиля:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   // загрузка логотипов
   const context = require.context('../img/', true, /LOGO\.jpeg$/)
