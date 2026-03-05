@@ -17,6 +17,7 @@ bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
 @bot.message_handler(commands=['start'])
 def handle_start(message):
     chat_id = message.chat.id
+    print("Получен /start")
 
     # создаём "виртуального" пользователя
     user, created = User.objects.get_or_create(
@@ -34,3 +35,4 @@ def handle_start(message):
 
 if __name__ == "__main__":
     bot.infinity_polling()
+

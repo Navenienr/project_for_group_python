@@ -8,7 +8,7 @@ from . import views
 app_name = 'news'
 
 router = DefaultRouter()
-router.register(r'', views.NewsViewSet, basename='news')
+router.register(r'news', views.NewsViewSet, basename='news')
 # router.register(r'articles', views.ArticleViewSet)
 # router.register(r'categories', views.CategoryViewSet)
 
@@ -21,7 +21,5 @@ urlpatterns = [
     path('news/<int:news_pk>/comments/',views.CommentView.as_view({'get': 'list', 'post': 'create'})),
     path('news/<int:news_pk>/comments/<int:pk>/', views.CommentView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
 
-    # path('news/<int:news_pk>/comments/', views.CommentView.as_view({'get': 'list', 'post': 'create'})),
-    # path('news/<int:news_pk>/comments/<int:pk>/', views.CommentView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
 
 ]
