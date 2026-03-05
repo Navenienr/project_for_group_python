@@ -8,6 +8,7 @@ from django.conf import settings
 import telebot
 from django.conf import settings
 from django.utils import timezone
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 User = get_user_model()
@@ -28,6 +29,7 @@ class IsModeratorUser(permissions.BasePermission):
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
+    authentication_classes = [JWTAuthentication]
 
     def get_permissions(self):
         if self.request.method == 'OPTIONS':
@@ -89,25 +91,26 @@ class NewsViewSet(viewsets.ModelViewSet):
                     user.telegram_chat_id = None
                     user.save()
 
-    # @action(detail=True, methods=['post'])
-    # def like(self, request, pk=None):
-    #     # Лайк новости
-    #     news = self.get_object()
-    #     like, created = NewsLike.objects.get_or_create(
-    #         news=news,
-    #         user=request.user
-    #     )
+    @action(detail=True, methods=['post'])
+    def like(self, request, pk=None):
+        # Лайк новости
+        news = self.get_object()
+        like, created = NewsLike.objects.get_or_create(
+            news=news,
+            user=request.user
+        )
 
-    #     if not created:
-    #         like.delete() # Повторное нажатие убирает лайк
-    #         liked = False
-    #     else:
-    #         liked = True
+        if not created:
+            like.delete() # Повторное нажатие убирает лайк
+            liked = False
+        else:
+            liked = True
 
-    #     return Response({
-    #         'liked': liked,
-    #         'likes_count': news.likes.count()
-    #     })
+        return Response({
+            'liked': liked,
+            'likes_count': news.likes.count()
+        })
+
     @action(detail=True, methods=['get', 'post'], url_path='comments')
     def comments(self, request, pk=None):
         """Эндпоинт для работы с комментариями конкретной новости"""
@@ -133,8 +136,10 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 class CommentView(viewsets.ModelViewSet):
     # Класс для работы с комментариями
+    
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    authentication_classes = [JWTAuthentication]
 
     def get_permissions(self):
         # 1. ОБЯЗАТЕЛЬНО: OPTIONS должен быть доступен всем для работы CORS
