@@ -33,6 +33,7 @@ class GameShortSerializer(serializers.ModelSerializer):
 
 
 class FavoriteGameSerializer(serializers.ModelSerializer):
+    game_details = GameSerializer(source='game', read_only=True)
     class Meta:
         model = FavoriteGame
         fields = '__all__'
