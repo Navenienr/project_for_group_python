@@ -10,12 +10,19 @@
     overflow: hidden;
     min-height: 450px;
     width: 100%;
+     height: auto;
+    align-items: stretch; 
+    transition: all 0.4s ease;
 }
 
+
+
 .post_main {
-    flex: 1.5;
-    padding: 35px;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    flex: 2.2;
+    min-width: 0; 
+    display: flex;
+    flex-direction: column;
+    padding: 35px; 
 }
 
 .post_header {
@@ -74,12 +81,20 @@
     -webkit-text-fill-color: initial;
 }
 .post_excerpt {
-    color: #e2e8f0;
+    display: -webkit-box;
+    -webkit-line-clamp: 10;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
     line-height: 1.6;
-    margin-bottom: 20px;
-    font-size: 17px;
-}
+    transition: all 0.3s ease;
+     word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word; 
+    white-space: pre-wrap; 
+    width: 100%;
+    max-width: 100%;
 
+}
 .post_image_content {
     width: 100%;
     height: 320px;
@@ -141,8 +156,8 @@ button.stat_item:hover {
 }
 
 .stat_item.liked svg {
-    fill: #a5b4fc;
-    stroke: #a5b4fc;
+    fill: #a5b4fc !important;
+    stroke: #a5b4fc !important;;
     filter: drop-shadow(0 0 8px rgba(165, 180, 252, 0.6));
 }
 
@@ -163,14 +178,19 @@ button.stat_item:hover {
 }
 
 .post_comments_sidebar {
-    flex: 0.7;
+    flex: 1;
     background: rgba(0, 0, 0, 0.1);
     padding: 25px;
     display: flex;
     flex-direction: column;
     gap: 20px; 
     box-sizing: border-box;
+    top: 0;
+    height: auto;
+    position: sticky;
 }
+
+
 .comments_title {
     font-size: 14px;
     color: #a5b4fc;
@@ -225,4 +245,32 @@ button.stat_item:hover {
     border-color: #8b5cf6;
     background: rgba(255, 255, 255, 0.08);
     box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+}
+
+
+.news_post.expanded {
+    min-height: auto;
+    height: auto;
+}
+
+.news_post.expanded .post_excerpt {
+    display: block;
+    overflow: visible;
+    -webkit-line-clamp: unset;
+    white-space: pre-wrap;
+}
+
+.read_more_wrapper {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+
+
+.post_image {
+    width: 100%;
+    border-radius: 12px;
+    margin: 15px 0;
+    object-fit: cover;
 }

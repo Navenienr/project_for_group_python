@@ -36,9 +36,12 @@ const Login = () => {
       })
 
       const data = await response.json();
+      console.log("Ответ сервера при логине:", data);
 
       if (data.success) {
-        localStorage.setItem("userToken", data.token);
+        const accessToken = data.token; 
+        localStorage.setItem("userToken", accessToken); 
+        console.log("Токен сохранен:", accessToken);
         localStorage.setItem("userName", data.user.username);
         window.dispatchEvent(new Event("authChange"));
         navigate("/");

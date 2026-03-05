@@ -10,6 +10,9 @@ from rest_framework.authtoken.models import Token
 from .serializers import RegisterSerializer, UserProfileSerializer
 
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
 @api_view(['GET'])
 def health_check(request):
     """Проверка работоспособности API."""
@@ -37,12 +40,19 @@ class RegisterView(generics.CreateAPIView):
             user = serializer.save() # вызываем метод create
 
             # создание токена
-            token, created = Token.objects.get_or_create(user=user) # возвращает кортеж
+            # token, created = Token.objects.get_or_create(user=user) # возвращает кортеж
+
+            # return Response({
+            #     'success': True,
+            #     'user': UserProfileSerializer(user).data,
+            #     'token': token.key
+            # }, status=status.HTTP_201_CREATED)
+            refresh = RefreshToken.for_user(user)
 
             return Response({
                 'success': True,
                 'user': UserProfileSerializer(user).data,
-                'token': token.key
+                'token': str(refresh.access_token), 
             }, status=status.HTTP_201_CREATED)
         
         return Response({
@@ -75,13 +85,20 @@ class LoginView(APIView):
         )
 
         # обработка результата
-        if user:
-            token, _ = Token.objects.get_or_create(user=user)
+        # if user:
+        #     token, _ = Token.objects.get_or_create(user=user)
 
+        #     return Response({
+        #         'success': True,
+        #         'user': UserProfileSerializer(user).data,
+        #         'token': token.key
+        #     })
+        if user:
+            refresh = RefreshToken.for_user(user) 
             return Response({
                 'success': True,
                 'user': UserProfileSerializer(user).data,
-                'token': token.key
+                'token': str(refresh.access_token),
             })
         
         return Response({

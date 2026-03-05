@@ -20,7 +20,7 @@ context.keys().forEach((path) => {
 const Games = () => {
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(true)
-  const location = useLocation(); // 2. Подключаем хук для отслеживания URL
+  const location = useLocation(); // хук для отслеживания URL
   
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
@@ -48,7 +48,7 @@ const Games = () => {
         setHasPrev(!!data.previous)
         setTotalPages(Math.ceil(data.count / 16)) 
         
-        await new Promise(resolve => setTimeout(resolve, 300))
+        await new Promise(resolve => setTimeout(resolve, 500))
         setLoading(false)
       } catch (error) {
         console.error('Ошибка:', error)

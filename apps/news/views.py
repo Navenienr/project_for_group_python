@@ -30,9 +30,13 @@ class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
 
     def get_permissions(self):
+        if self.request.method == 'OPTIONS':
+            return [permissions.AllowAny()]
         # Проверка разрешений для публикации новости
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             self.permission_classes = [permissions.IsAdminUser | IsModeratorUser]
+        elif self.action == 'like':
+            self.permission_classes = [permissions.IsAuthenticated]
         else:
             self.permission_classes = [permissions.AllowAny]
 

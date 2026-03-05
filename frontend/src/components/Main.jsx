@@ -11,23 +11,38 @@ export default function Main() {
 
   useEffect(() => {
     const get_news = async () => {
-    try {
-        const response = await fetch('http://127.0.0.1:8000/api/news/news/');
+      try {
+        let token = localStorage.getItem('userToken');
+        if (token) {
+            token = token.replace(/"/g, '').trim();
+        }
+
+        const requestHeaders = {
+          'Content-Type': 'application/json'
+        }
+
+        if (token) {
+          requestHeaders['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch('http://127.0.0.1:8000/api/news/news/', {
+          method: 'GET',
+          headers: requestHeaders
+        })
+
         const data = await response.json();
-            
         const newsData = data.results || data;
         setNews(newsData);
+        await new Promise(resolve => setTimeout(resolve, 500));
         setLoading(false);
-        console.log(newsData)
 
-    } catch (error) {
-        console.error('Ошибка:', error)
-        setLoading(false) 
-        }
-    }
-    get_news()
-  }, [])
-  
+      } catch (error) {
+        console.error('Ошибка:', error);
+        setLoading(false);
+      }
+    };
+    get_news();
+  }, []);
 
   
   return (
