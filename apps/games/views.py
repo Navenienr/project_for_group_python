@@ -36,4 +36,53 @@ class GenreListView(generics.ListAPIView):
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def add_to_favorites(request, game_id):
-    pass
+    # Добавление игры в избранное
+    game = get_object_or_404(Game, pk=game_id)
+
+    FavoriteGame.objects.create(
+        user=request.user,
+        game=game
+    )
+
+    return Response({'status': 'added'}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['DELETE'])
+@permission_classes([permissions.IsAuthenticated])
+def remove_from_favorites(request, game_id):
+    # Удаление игры из избранного
+    game = get_object_or_404(Game, pk=game_id)
+
+    deleted, _ = FavoriteGame.objects.filter(
+        user=request.user,
+        game=game
+    ).delete()
+
+    if deleted:
+        return Response({'status': 'removed'})
+    
+    return Response(
+        {'error': 'Игра не найдена в избранном'},
+        status=status.HTTP_404_NOT_FOUND
+    )
+
+class FavoriteGameListView(generics.ListAPIView):
+    # Список игр в избранном
+    serializer_class = FavoriteGameSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return FavoriteGame.objects.filter(user=self.request.user)
+    
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def check_favorite(request, game_id):
+    # Проверка, есть ли игра в избранном
+    game = get_object_or_404(Game, pk=game_id)
+
+    is_favorite = FavoriteGame.objects.filter(
+        user=request.user,
+        game=game
+    ).exists()
+
+    return Response({'is_favorite': is_favorite})
