@@ -8,6 +8,8 @@ from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework.authtoken.models import Token
 from .serializers import RegisterSerializer, UserProfileSerializer, UserProfileUpdateSerializer
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.decorators import authentication_classes
 
 
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -40,14 +42,6 @@ class RegisterView(generics.CreateAPIView):
         if serializer.is_valid():
             user = serializer.save() # вызываем метод create
 
-            # создание токена
-            # token, created = Token.objects.get_or_create(user=user) # возвращает кортеж
-
-            # return Response({
-            #     'success': True,
-            #     'user': UserProfileSerializer(user).data,
-            #     'token': token.key
-            # }, status=status.HTTP_201_CREATED)
             refresh = RefreshToken.for_user(user)
 
             return Response({
@@ -113,6 +107,7 @@ class LogoutView(APIView):
     # Класс для выхода пользователя из системы
 
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication] 
 
     def post(self, request):
         # метод для обработки POST-запроса
@@ -142,6 +137,7 @@ class UpdateProfileView(generics.UpdateAPIView):
 
     serializer_class = UserProfileUpdateSerializer
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication] 
 
     def get_object(self):
         # метод для получения текущего пользователя

@@ -103,15 +103,55 @@ const Profile = () => {
     }
   };
 
-  const handleButtonClick = () => {
-    if (isEditing) alert('Данные успешно сохранены!')
-    setIsEditing(prev => !prev)
-  }
+  const handleButtonClick = async () => {
+    if (isEditing) {
+      const token = localStorage.getItem('userToken')?.replace(/"/g, '').trim();
+      const updateData = {
+        username: data.username,
+        email: data.email,
+        tg_username: data.telegram 
+      };
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/core/profile/update/', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(updateData)
+        });
+
+        if (response.ok) {
+          const updatedUser = await response.json();
+          if (updatedUser.username) {
+              localStorage.setItem('userName', updatedUser.username);
+          }
+          // Обновляем стейт данными, которые вернул сервер
+          setData(prev => ({
+            ...prev,
+            username: updatedUser.username,
+            email: updatedUser.email,
+            telegram: updatedUser.tg_username // Синхронизируем обратно
+          }));
+          alert('Данные успешно сохранены!');
+        } else {
+          const errorData = await response.json();
+          console.error('Ошибка сервера:', errorData);
+          alert(`Ошибка: ${JSON.stringify(errorData)}`);
+        }
+      } catch (error) {
+        console.error('Ошибка сети:', error);
+        alert('Не удалось связаться с сервером');
+      }
+    }
+    
+    setIsEditing(prev => !prev);
+  };
 
   const handleChange = (field, value) => {
     setData(prev => ({ ...prev, [field]: value }))
   }
-
   return (
     <div className={S.wrapper}>
       <Header />

@@ -40,15 +40,14 @@ body::-webkit-scrollbar {
 }
 
 .main_container {
-    display: flex;
+   display: flex;
     max-width: 1800px;
-    margin: 0 auto;
-    padding: 100px 20px 60px 20px; 
+    margin: 40px auto 0; /* Добавлен отступ 40px сверху */
+    padding: 20px;
     gap: 20px;
     position: relative;
-    z-index: 10; 
-    min-height: 100vh;
-    align-items: stretch;
+    z-index: 10;
+    min-height: calc(100vh - 100px); /* Вычитаем примерную высоту хедера */
     box-sizing: border-box;
 }
 
@@ -464,3 +463,9 @@ body::-webkit-scrollbar {
 
 
 
+@media (max-width: 768px) {
+    .main_container {
+        margin-top: 20px; /* Уменьшаем отступ на мобильных */
+        padding: 10px;
+    }
+}
