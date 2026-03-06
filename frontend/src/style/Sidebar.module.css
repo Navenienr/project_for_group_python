@@ -174,3 +174,34 @@
     color: #a5b4fc;
     transform: translateX(5px);
 }
+
+@media screen and (max-width: 1366px) {
+    .sidebar {
+        width: 230px;
+        min-width: 230px;
+        max-width: 230px;
+        padding: 20px 5px 20px 8px;
+    }
+
+    .sidebar_title {
+        font-size: 15px;
+        margin-bottom: 12px;
+        padding-left: 8px;
+    }
+
+    .sidebar_menu a {
+        font-size: 13px;
+        padding: 9px 8px 9px 12px;
+        gap: 8px;
+    }
+
+    .sidebar_section {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 1440px) {
+    .sidebar_wrapper {
+        width: 240px;
+    }
+}

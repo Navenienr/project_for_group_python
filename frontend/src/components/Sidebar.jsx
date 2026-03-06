@@ -48,8 +48,8 @@ const Sidebar = () => {
             <div className={S.sidebar_section}>
                 <NavLink to='/' className={S.sidebar_title}>Статьи</NavLink>
                 <ul className={S.sidebar_menu}>
-                    <li><a href="#">Новые</a></li>
-                    <li><a href="#">Популярные</a></li>
+                    <li><NavLink to="/?ordering=-published_at">Новые</NavLink></li>
+                    <li><NavLink to="/?ordering=-likes_count_attr">Популярные</NavLink></li>
                 </ul>
             </div>
 

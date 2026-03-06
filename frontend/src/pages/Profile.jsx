@@ -178,7 +178,7 @@ const Profile = () => {
               <div style={{color: '#fff'}}>Загрузка списка...</div>
             ) : games.length > 0 ? (
               games.map((item) => {
-                // Извлекаем данные игры
+                // извлекаем данные игры
                 const gameData = item.game_details || item;
                 return (
                   <FavouriteItem 

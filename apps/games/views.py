@@ -9,6 +9,8 @@ from .serializers import (
     GenreSerializer, 
     FavoriteGameSerializer
 )
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.decorators import authentication_classes
 
 class GameListView(generics.ListAPIView):
     queryset = Game.objects.all()
@@ -35,6 +37,7 @@ class GenreListView(generics.ListAPIView):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
+@authentication_classes([JWTAuthentication])
 def add_to_favorites(request, game_id):
     # Добавление игры в избранное
     game = get_object_or_404(Game, pk=game_id)
@@ -49,6 +52,7 @@ def add_to_favorites(request, game_id):
 
 @api_view(['DELETE'])
 @permission_classes([permissions.IsAuthenticated])
+@authentication_classes([JWTAuthentication])
 def remove_from_favorites(request, game_id):
     # Удаление игры из избранного
     game = get_object_or_404(Game, pk=game_id)
@@ -70,12 +74,14 @@ class FavoriteGameListView(generics.ListAPIView):
     # Список игр в избранном
     serializer_class = FavoriteGameSerializer
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication] 
 
     def get_queryset(self):
         return FavoriteGame.objects.filter(user=self.request.user)
     
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
+@authentication_classes([JWTAuthentication])
 def check_favorite(request, game_id):
     # Проверка, есть ли игра в избранном
     game = get_object_or_404(Game, pk=game_id)
@@ -86,3 +92,5 @@ def check_favorite(request, game_id):
     ).exists()
 
     return Response({'is_favorite': is_favorite})
+
+    

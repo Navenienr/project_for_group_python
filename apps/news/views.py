@@ -9,6 +9,8 @@ import telebot
 from django.conf import settings
 from django.utils import timezone
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework import filters
+from django.db.models import Count
 
 
 User = get_user_model()
@@ -26,9 +28,12 @@ class IsModeratorUser(permissions.BasePermission):
 
 
 class NewsViewSet(viewsets.ModelViewSet):
-    queryset = News.objects.all()
+    queryset = News.objects.annotate(likes_count_attr=Count('likes')).all()
     serializer_class = NewsSerializer
     authentication_classes = [JWTAuthentication]
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['published_at', 'likes_count_attr', 'views_count']
+    ordering = ['-published_at']
 
     def get_permissions(self):
         if self.request.method == 'OPTIONS':

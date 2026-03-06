@@ -1,116 +1,113 @@
 .news_post {
     display: flex;
+    width: 100%;
+    height: auto;
+    min-height: 350px;
     background: rgba(255, 255, 255, 0.03); 
     border-radius: 20px;
     backdrop-filter: blur(20px) saturate(160%);
     border: 1px solid rgba(99, 102, 241, 0.3);
-    border-left: none;
     box-shadow: 10px 0 40px rgba(0, 0, 0, 0.3); 
     position: relative;
     overflow: hidden;
-    min-height: 450px;
-    width: 100%;
-     height: auto;
-    align-items: stretch; 
     transition: all 0.4s ease;
+    align-items: stretch;
 }
 
-
-
 .post_main {
-    flex: 2.2;
+    flex: 2.5;
+    padding: 25px 30px;
     min-width: 0; 
     display: flex;
     flex-direction: column;
-    padding: 35px; 
 }
 
 .post_header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
 }
 
 .post_author {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
 }
 
 .author_avatar {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     background: #6366f1; 
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .author_name {
     font-weight: 700;
     color: #ffffff;
-    font-size: 18px;
-    margin-bottom: 4px;
+    font-size: 16px;
+    margin-bottom: 2px;
 }
 
 .post_time {
-    font-size: 14px;
+    font-size: 13px;
     color: #cbd5e1;
 }
 
-.post_category {
-    background: rgba(99, 102, 241, 0.3);
-    color: #ffffff;
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-size: 14px;
+.post_title {
+    font-size: 22px;
     font-weight: 700;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    margin-bottom: 10px;
+    line-height: 1.3;
 }
 
-.post_title {
-    font-size: 24px;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 12px;
-    line-height: 1.3;
-    background: none;
-    -webkit-text-fill-color: initial;
-}
 .post_excerpt {
     display: -webkit-box;
-    -webkit-line-clamp: 10;
+    -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    line-height: 1.6;
-    transition: all 0.3s ease;
-     word-wrap: break-word;
-    overflow-wrap: break-word;
-    word-break: break-word; 
+    line-height: 1.5;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    word-wrap: break-word;
     white-space: pre-wrap; 
+    margin-bottom: 15px;
+}
+
+.post_image, .post_image_content {
     width: 100%;
     max-width: 100%;
-
-}
-.post_image_content {
-    width: 100%;
-    height: 320px;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    max-height: 350px;
+    object-fit: cover;
     border-radius: 12px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(255, 255, 255, 0.1);
+    margin: 10px 0;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.post_image, .post_image_content {
+    width: calc(100% - 60px);
+    margin: 20px auto;
+    
+    aspect-ratio: 16 / 9;
+    height: auto;
+    max-height: 450px;
+    
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
 }
 
 .post_stats {
     display: flex;
-    gap: 15px;
-    padding-top: 25px;
+    gap: 12px;
+    padding-top: 20px;
     margin-top: auto;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -118,27 +115,13 @@
 .stat_item {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 8px 16px;
-    border-radius: 10px;
+    padding: 6px 14px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     color: rgba(255, 255, 255, 0.6);
-    font-size: 0.9rem;
-    cursor: default;
-    transition: all 0.3s ease;
-}
-
-button.stat_item {
-    cursor: pointer;
-}
-
-button.stat_item svg {
-    width: 18px;
-    height: 18px;
-    stroke: rgba(255, 255, 255, 0.6);
-    stroke-width: 2px;
-    fill: transparent;
+    font-size: 0.85rem;
     transition: all 0.3s ease;
 }
 
@@ -148,7 +131,6 @@ button.stat_item:hover {
     color: #fff;
 }
 
-
 .stat_item.liked {
     background: rgba(99, 102, 241, 0.15);
     border-color: rgba(165, 180, 252, 0.5);
@@ -157,111 +139,69 @@ button.stat_item:hover {
 
 .stat_item.liked svg {
     fill: #a5b4fc !important;
-    stroke: #a5b4fc !important;;
-    filter: drop-shadow(0 0 8px rgba(165, 180, 252, 0.6));
-}
-
-
-.stat_item.liked:hover {
-    color: #ff4d4d;
-    border-color: rgba(255, 77, 77, 0.4);
-}
-
-.post_stats span {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 15px;
-    color: #cbd5e1;
-    cursor: pointer;
-    transition: 0.3s;
+    stroke: #a5b4fc !important;
 }
 
 .post_comments_sidebar {
     flex: 1;
-    background: rgba(0, 0, 0, 0.1);
-    padding: 25px;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 20px; 
     box-sizing: border-box;
-    top: 0;
-    height: auto;
-    position: sticky;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-
 .comments_title {
-    font-size: 14px;
+    font-size: 12px;
     color: #a5b4fc;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
     font-weight: 700;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .comments_list {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     overflow-y: auto;
-    padding: 0; 
+    max-height: 400px;
+    margin-bottom: 15px;
+    scrollbar-width: none;
 }
 
-.comments_list::-webkit-scrollbar { width: 0; }
+.comments_list::-webkit-scrollbar { display: none; }
 
 .comment_item {
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(255, 255, 255, 0.8);
-    line-height: 1.4;
     background: rgba(255, 255, 255, 0.03);
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 8px;
 }
-
-.comment_user {
-    font-weight: 700;
-    color: #fff;
-    display: block;
-    margin-bottom: 3px;
-    font-size: 13px;
-}
-
-.comment_input {
-    width: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    border-radius: 10px;
-    padding: 12px 15px; 
-    font-size: 0.9rem;
-    outline: none;
-    transition: all 0.3s ease;
-    box-sizing: border-box; 
-    margin-top: 10px; 
-    color: #fff;
-}
-
-.comment_input:focus {
-    border-color: #8b5cf6;
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
-}
-
 
 .comment_input_wrapper {
     display: flex;
-    align-items: center;
     gap: 8px;
-    padding: 10px;
+    margin-top: auto;
 }
 
 .comment_input {
     flex: 1;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 8px;
+    padding: 8px 12px; 
+    font-size: 13px;
+    color: #fff;
     outline: none;
+}
+
+.news_post.expanded .post_excerpt {
+    display: block;
+    -webkit-line-clamp: unset;
 }
 
 .send_comment_btn {
@@ -271,41 +211,47 @@ button.stat_item:hover {
     font-size: 20px;
     cursor: pointer;
     transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .send_comment_btn:hover:not(:disabled) {
     transform: scale(1.2);
+    color: #a5b4fc;
 }
 
-.send_comment_btn:disabled {
-    color: #ccc;
-    cursor: default;
+.comment_input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 10px;
+    padding: 10px 15px; 
+    font-size: 0.9rem;
+    outline: none;
+    color: #fff;
+    transition: all 0.3s ease;
 }
 
-
-.news_post.expanded {
-    min-height: auto;
-    height: auto;
-}
-
-.news_post.expanded .post_excerpt {
-    display: block;
-    overflow: visible;
-    -webkit-line-clamp: unset;
-    white-space: pre-wrap;
-}
-
-.read_more_wrapper {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-start;
-}
-
-
-
-.post_image {
-    width: 100%;
-    border-radius: 12px;
-    margin: 15px 0;
-    object-fit: cover;
+@media (max-width: 1400px) {
+    .news_post {
+        min-height: 300px;
+    }
+    .post_main {
+        padding: 20px;
+    }
+    .post_title {
+        font-size: 18px;
+    }
+    .post_excerpt {
+        font-size: 14px;
+        -webkit-line-clamp: 4;
+    }
+    .post_image, .post_image_content {
+        max-height: 250px;
+    }
+    .post_comments_sidebar {
+        padding: 15px;
+        flex: 0.9;
+    }
 }
