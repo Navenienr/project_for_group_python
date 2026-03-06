@@ -92,3 +92,5 @@ def check_favorite(request, game_id):
     ).exists()
 
     return Response({'is_favorite': is_favorite})
+
+    
