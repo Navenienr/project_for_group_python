@@ -15,7 +15,6 @@ from django.db.models import Count
 
 User = get_user_model()
 
-
 bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
 
 
@@ -60,6 +59,7 @@ class NewsViewSet(viewsets.ModelViewSet):
             published_at=timezone.now()
         )
 
+        print("Новость создана:", news.title)
         self._send_telegram(news)
 
     
@@ -76,6 +76,7 @@ class NewsViewSet(viewsets.ModelViewSet):
     def _send_telegram(self, news):
         # Отправка новости в Telegram
 
+        print("Запущена рассылка")
         subscribers = User.objects.exclude(telegram_chat_id__isnull=True).exclude(telegram_chat_id='')
 
         if not subscribers.exists():

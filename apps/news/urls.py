@@ -17,6 +17,9 @@ router.register(r'news', views.NewsViewSet, basename='news')
 urlpatterns = [
     path('', include(router.urls)),
     # Ручная привязка комментариев
-    # path('news/<int:news_pk>/comments/', views.CommentView.as_view({'get': 'list', 'post': 'create'})),
-    # path('news/<int:news_pk>/comments/<int:pk>/', views.CommentView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
+
+    path('news/<int:news_pk>/comments/',views.CommentView.as_view({'get': 'list', 'post': 'create'})),
+    path('news/<int:news_pk>/comments/<int:pk>/', views.CommentView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
+
+
 ]
