@@ -13,7 +13,6 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 User = get_user_model()
 
-
 bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
 
 
