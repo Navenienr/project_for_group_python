@@ -11,21 +11,71 @@ const Game = () => {
     const [game, setGame] = useState(null)
     const [activeIndex, setActiveIndex] = useState(0)
     const [isFavorite, setIsFavorite] = useState(false)
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchGame = async () => {
-          try {
-            const response = await fetch(`http://127.0.0.1:8000/api/games/${id}`)
-            const data = await response.json()
-            await new Promise(resolve => setTimeout(resolve, 700))
+    
+   useEffect(() => {
+        const fetchGameAndStatus = async () => {
+            const token = localStorage.getItem('userToken')?.replace(/"/g, '').trim();
             
-            setGame(data)
-          } catch (error) {
-            console.error('Ошибка:', error)
-          }
+            try {
+                // загрузка данныx игры
+                const response = await fetch(`http://127.0.0.1:8000/api/games/${id}/`);
+                const data = await response.json();
+                setGame(data);
+
+                // если пользователь залогинен проверяем избранное
+                if (token) {
+                    try {
+                        const resFav = await fetch(`http://127.0.0.1:8000/api/games/${id}/favorite/check/`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (resFav.ok) {
+                            const dataFav = await resFav.json();
+                            setIsFavorite(dataFav.is_favorite);
+                        }
+                    } catch (error) {
+                        console.error("Ошибка проверки избранного:", error);
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки игры:', error);
+            } finally {
+                setTimeout(() => setLoading(false), 700);
+            }
+        };
+
+        fetchGameAndStatus();
+    }, [id]);
+
+    const toggleFavorite = async () => {
+        const token = localStorage.getItem('userToken')?.replace(/"/g, '').trim();
+        if (!token) {
+            alert("Войдите в систему, чтобы управлять избранным");
+            return;
         }
-        fetchGame()
-    }, [id])
+
+        // определение метода в зависимости от текущего статуса
+        const url = `http://127.0.0.1:8000/api/games/${id}/favorite/${isFavorite ? 'remove' : 'add'}/`;
+        const method = isFavorite ? 'DELETE' : 'POST';
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                setIsFavorite(!isFavorite);
+            }
+        } catch (error) {
+            console.error("Ошибка при смене статуса избранного:", error);
+        }
+    };
+
     const context = require.context('../img/', true, /\.(jpg|jpeg|png)$/)
     const allPaths = context.keys()
 
@@ -121,15 +171,20 @@ const Game = () => {
                                             <a href={game.download_link} className={S.btn_download} target="_blank" rel="noreferrer">
                                                 Скачать
                                             </a>
-                                            <button 
-                                                className={`${S.btn_favorite_text} ${isFavorite ? S.active : ''}`}
-                                                onClick={() => setIsFavorite(!isFavorite)}
-                                            >
-                                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org">
-                                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                                                </svg>
-                                                {isFavorite ? 'Убрать из избранного' : 'В избранное'}
-                                            </button>
+                                                <button 
+                                                    className={`${S.btn_favorite_text} ${isFavorite ? S.active : ''}`}
+                                                    onClick={toggleFavorite}
+                                                >
+                                                    <svg 
+                                                        viewBox="0 0 24 24" 
+                                                        fill={isFavorite ? "red" : "none"} 
+                                                        stroke={isFavorite ? "red" : "currentColor"} 
+                                                        style={{ width: '20px', marginRight: '8px', transition: '0.3s' }}
+                                                    >
+                                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                                    </svg>
+                                                    {isFavorite ? 'Убрать из избранного' : 'В избранное'}
+                                                </button>
                                         </div>
                                     </div>
                                 </div>
