@@ -180,7 +180,7 @@ const submitComment = async () => {
                     className={S.comment_input}
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
-                    // Отправка по Enter
+                    // отправка по Enter
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             e.preventDefault();

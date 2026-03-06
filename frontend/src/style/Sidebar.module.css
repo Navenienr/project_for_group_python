@@ -199,3 +199,9 @@
         margin-bottom: 20px;
     }
 }
+
+@media (max-width: 1440px) {
+    .sidebar_wrapper {
+        width: 240px;
+    }
+}
