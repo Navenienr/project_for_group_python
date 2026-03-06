@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework.authtoken.models import Token
-from .serializers import RegisterSerializer, UserProfileSerializer
+from .serializers import RegisterSerializer, UserProfileSerializer, UserProfileUpdateSerializer
 
 
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -135,3 +135,19 @@ class ProfileView(generics.RetrieveAPIView):
     def get_object(self):
         # метод для получения текущего пользователя
         return self.request.user
+    
+
+class UpdateProfileView(generics.UpdateAPIView):
+    # Класс для обновления профиля пользователя
+
+    serializer_class = UserProfileUpdateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        # метод для получения текущего пользователя
+        return self.request.user
+    
+    def perform_update(self, serializer):
+        # метод для обновления профиля пользователя
+        serializer.save()
+    

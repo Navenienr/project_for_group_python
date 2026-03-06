@@ -68,3 +68,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
         games = [favorite.game for favorite in favorites] # Создаем список игр
 
         return GameSerializer(games, many=True, context=self.context).data
+
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    # Сериализатор обновления профиля пользователя
+    class Meta:
+        model = User
+        fields = ('first_name', 'tg_username')
+
+    
