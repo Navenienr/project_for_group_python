@@ -33,7 +33,7 @@ const Profile = () => {
             username: profileData.username,
             name: profileData.first_name || 'Не указано',
             email: profileData.email,
-            telegram: profileData.telegram_chat_id || '@не_привязан', 
+            telegram: profileData.tg_username || '@не_привязан', 
           });
         }
       } catch (error) {
@@ -107,7 +107,7 @@ const Profile = () => {
     if (isEditing) {
       const token = localStorage.getItem('userToken')?.replace(/"/g, '').trim();
       const updateData = {
-        username: data.username,
+        first_name: data.name,
         email: data.email,
         tg_username: data.telegram 
       };
@@ -131,10 +131,12 @@ const Profile = () => {
           setData(prev => ({
             ...prev,
             username: updatedUser.username,
-            email: updatedUser.email,
+            name: updatedUser.first_name || prev.name,
+            email: updatedUser.email, 
             telegram: updatedUser.tg_username // Синхронизируем обратно
           }));
           alert('Данные успешно сохранены!');
+          setIsEditing(false);
         } else {
           const errorData = await response.json();
           console.error('Ошибка сервера:', errorData);
@@ -144,10 +146,12 @@ const Profile = () => {
         console.error('Ошибка сети:', error);
         alert('Не удалось связаться с сервером');
       }
-    }
+    } else{
     
-    setIsEditing(prev => !prev);
+      setIsEditing(true);
+    }
   };
+
 
   const handleChange = (field, value) => {
     setData(prev => ({ ...prev, [field]: value }))
@@ -171,7 +175,7 @@ const Profile = () => {
                 <div className={S.data_item}>
                   {isEditing ? (
                     <><label>Ник:</label>
-                    <input type="text" value={data.username} onChange={(e) => handleChange('username', e.target.value)} className={S.input}/></>
+                    <input type="text" value={data.username} disabled className={S.input}/></>
                   ) : (
                     <h4>Ник: {data.username}</h4>
                   )}
